@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KnowBuddy - StoreHub Style Chat Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'storehub-orange': '#ff6b35',
+                        'storehub-orange-hover': '#e55a2b',
+                        'storehub-blue': '#34495e',
+                        'storehub-blue-hover': '#2c3e50',
+                        'storehub-gray': '#6c757d',
+                        'storehub-gray-light': '#adb5bd',
+                        'storehub-bg': '#f8f9fa',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom scrollbar for StoreHub style */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #adb5bd;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6c757d;
+        }
+
+        /* Animation for typing indicator */
+        @keyframes bounce {
+            0%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+        }
+        .animate-bounce-custom {
+            animation: bounce 1.4s infinite;
+        }
+        .animate-bounce-custom:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        .animate-bounce-custom:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+    </style>
+</head>
+<body class="bg-white text-storehub-blue font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Left Sidebar -->
+        <div class="w-64 h-screen bg-storehub-bg border-r border-gray-200 flex flex-col shadow-sm">
+            <!-- Logo -->
+            <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-storehub-orange rounded-lg flex items-center justify-center">
+                        <span class="text-white font-bold text-sm">KB</span>
+                    </div>
+                    <span class="text-storehub-blue font-bold text-xl">KnowBuddy</span>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="flex-1 px-3 py-4">
+                <button class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left bg-white shadow-sm border border-gray-200 text-storehub-blue mb-2">
+                    <span class="text-lg">🏠</span>
+                    <span class="text-base font-medium">Home</span>
+                </button>
+                <button class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left text-storehub-gray hover:bg-white hover:text-storehub-blue hover:shadow-sm transition-all mb-2">
+                    <span class="text-lg">🔍</span>
+                    <span class="text-base font-medium">Explore</span>
+                </button>
+                <button class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left text-storehub-gray hover:bg-white hover:text-storehub-blue hover:shadow-sm transition-all mb-2">
+                    <span class="text-lg">🔔</span>
+                    <span class="text-base font-medium">Notifications</span>
+                </button>
+                <button class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left text-storehub-gray hover:bg-white hover:text-storehub-blue hover:shadow-sm transition-all mb-2">
+                    <span class="text-lg">✉️</span>
+                    <span class="text-base font-medium">Messages</span>
+                </button>
+                <button class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left text-storehub-gray hover:bg-white hover:text-storehub-blue hover:shadow-sm transition-all mb-2">
+                    <span class="text-lg">🔖</span>
+                    <span class="text-base font-medium">Bookmarks</span>
+                </button>
+                <button class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left text-storehub-gray hover:bg-white hover:text-storehub-blue hover:shadow-sm transition-all mb-2">
+                    <span class="text-lg">👥</span>
+                    <span class="text-base font-medium">Communities</span>
+                </button>
+                <button class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left text-storehub-gray hover:bg-white hover:text-storehub-blue hover:shadow-sm transition-all mb-2">
+                    <span class="text-lg">👤</span>
+                    <span class="text-base font-medium">Profile</span>
+                </button>
+            </nav>
+
+            <!-- User Profile -->
+            <div class="p-4 border-t border-gray-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-storehub-orange rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold">W</span>
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-storehub-blue font-medium">Wendy</div>
+                        <div class="text-storehub-gray text-sm">@wendylw</div>
+                    </div>
+                    <button class="text-storehub-gray hover:text-storehub-blue">
+                        <span class="text-lg">⋯</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 border-x border-gray-200 flex flex-col h-screen bg-white">
+            <!-- Header -->
+            <div class="sticky top-0 bg-white border-b border-gray-200 p-4 z-10 shadow-sm">
+                <div class="flex items-center justify-between">
+                    <h1 class="text-xl font-bold text-storehub-blue">For You</h1>
+                    <button class="text-storehub-gray hover:text-storehub-blue p-2 rounded-lg hover:bg-gray-50">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Message Input -->
+            <div class="border-b border-gray-200 p-4 bg-white">
+                <div class="flex space-x-3">
+                    <div class="flex-shrink-0">
+                        <div class="w-10 h-10 bg-storehub-orange rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold text-sm">W</span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <textarea
+                            id="messageInput"
+                            placeholder="What's happening?"
+                            class="w-full bg-gray-50 text-storehub-blue text-lg placeholder-storehub-gray resize-none border border-gray-200 rounded-lg outline-none p-3 min-h-[100px] focus:border-storehub-orange focus:ring-2 focus:ring-storehub-orange focus:ring-opacity-20"
+                            maxlength="280"
+                        ></textarea>
+                        <div class="flex items-center justify-between mt-3">
+                            <div class="flex items-center space-x-4">
+                                <button class="text-storehub-orange hover:text-storehub-orange-hover transition-colors p-2 rounded-lg hover:bg-orange-50" title="Add media">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                </button>
+                                <button class="text-storehub-orange hover:text-storehub-orange-hover transition-colors p-2 rounded-lg hover:bg-orange-50" title="Add emoji">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <button
+                                id="postButton"
+                                onclick="sendMessage()"
+                                class="bg-storehub-orange hover:bg-storehub-orange-hover disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-sm"
+                            >
+                                Post
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages -->
+            <div id="messagesContainer" class="flex-1 overflow-y-auto bg-gray-50">
+                <!-- Sample messages will be added here by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="w-80 h-screen p-4 space-y-4 bg-storehub-bg">
+            <!-- Search Bar -->
+            <div class="relative">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-storehub-gray" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                </div>
+                <input
+                    type="text"
+                    placeholder="Search"
+                    class="w-full bg-white text-storehub-blue placeholder-storehub-gray rounded-lg py-3 pl-10 pr-4 border border-gray-200 focus:outline-none focus:border-storehub-orange focus:ring-2 focus:ring-storehub-orange focus:ring-opacity-20"
+                />
+            </div>
+
+            <!-- Trends -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                <div class="p-4 border-b border-gray-200">
+                    <h2 class="text-lg font-bold text-storehub-blue">Indonesia trends</h2>
+                </div>
+                <div class="divide-y divide-gray-200">
+                    <div class="p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                        <p class="text-storehub-gray text-sm">Technology · Trending</p>
+                        <p class="text-storehub-blue font-semibold mt-1">belajar javascript di jawa</p>
+                        <p class="text-storehub-gray text-sm mt-1">2,847 posts</p>
+                    </div>
+                    <div class="p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                        <p class="text-storehub-gray text-sm">Programming · Trending</p>
+                        <p class="text-storehub-blue font-semibold mt-1">kerja remote hui asik</p>
+                        <p class="text-storehub-gray text-sm mt-1">1,234 posts</p>
+                    </div>
+                    <div class="p-4 hover:bg-gray-50 transition-colors cursor-pointer">
+                        <p class="text-storehub-gray text-sm">Indonesia · Trending</p>
+                        <p class="text-storehub-blue font-semibold mt-1">jawa banyak kelas gratis</p>
+                        <p class="text-storehub-gray text-sm mt-1">5,678 posts</p>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <button class="text-storehub-orange hover:text-storehub-orange-hover text-sm font-medium">Show more</button>
+                </div>
+            </div>
+
+            <!-- Who to follow -->
+            <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-200">
+                <div class="p-4 border-b border-gray-200">
+                    <h2 class="text-lg font-bold text-storehub-blue">You might like</h2>
+                </div>
+                <div class="divide-y divide-gray-200">
+                    <div class="p-4 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-storehub-orange rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">S</span>
+                                </div>
+                                <div>
+                                    <div class="flex items-center space-x-1">
+                                        <span class="text-storehub-blue font-semibold">Shayna</span>
+                                        <svg class="w-4 h-4 text-storehub-orange" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-storehub-gray text-sm">@shayna</p>
+                                </div>
+                            </div>
+                            <button class="bg-storehub-orange text-white font-semibold py-2 px-4 rounded-lg hover:bg-storehub-orange-hover transition-colors shadow-sm">
+                                Follow
+                            </button>
+                        </div>
+                    </div>
+                    <div class="p-4 hover:bg-gray-50 transition-colors">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 bg-storehub-blue rounded-full flex items-center justify-center">
+                                    <span class="text-white font-bold text-sm">M</span>
+                                </div>
+                                <div>
+                                    <div class="flex items-center space-x-1">
+                                        <span class="text-storehub-blue font-semibold">Masayoshi</span>
+                                        <svg class="w-4 h-4 text-storehub-orange" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <p class="text-storehub-gray text-sm">@masayoshi</p>
+                                </div>
+                            </div>
+                            <button class="bg-storehub-orange text-white font-semibold py-2 px-4 rounded-lg hover:bg-storehub-orange-hover transition-colors shadow-sm">
+                                Follow
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="p-4">
+                    <button class="text-storehub-orange hover:text-storehub-orange-hover text-sm font-medium">Show more</button>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="text-storehub-gray text-xs space-y-2 px-4">
+                <div class="flex flex-wrap gap-x-3 gap-y-1">
+                    <a href="#" class="hover:text-storehub-blue hover:underline">Terms of Service</a>
+                    <a href="#" class="hover:text-storehub-blue hover:underline">Privacy Policy</a>
+                    <a href="#" class="hover:text-storehub-blue hover:underline">Cookie Policy</a>
+                    <a href="#" class="hover:text-storehub-blue hover:underline">Accessibility</a>
+                    <a href="#" class="hover:text-storehub-blue hover:underline">More</a>
+                </div>
+                <p>© 2024 KnowBuddy Corp.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample messages data
+        const sampleMessages = [
+            {
+                id: '1',
+                content: 'Halo semuanya dalam menyatakan uang tahun BuildWithAngga ke-4 maka kami telah merintis 8 kali dengan untuk dipelajari tahun ini',
+                author: 'BuildWithAngga',
+                timestamp: '2h',
+                likes: 32,
+                replies: 5,
+                retweets: 12,
+            },
+            {
+                id: '2',
+                content: 'Javascript susah juga buat pemula',
+                author: 'Masayoshi',
+                timestamp: '3h',
+                likes: 184,
+                replies: 23,
+                retweets: 45,
+            },
+            {
+                id: '3',
+                content: 'Besok libur, bisa upgrade skills engineering!!!',
+                author: 'Algowy',
+                timestamp: '4h',
+                likes: 156,
+                replies: 18,
+                retweets: 34,
+            },
+            {
+                id: '4',
+                content: 'Tidak pernah berhenti mempelajari karena impian kita bisa menjadi dengan pola mentor expert kami',
+                author: 'BuildWithAngga',
+                timestamp: '5h',
+                likes: 89,
+                replies: 12,
+                retweets: 28,
+            },
+        ];
+
+        // Mock AI responses
+        const mockResponses = [
+            "That's an interesting point! I'd love to hear more about your thoughts on this topic.",
+            "Thanks for sharing! This reminds me of similar discussions in the tech community.",
+            "Great question! This is definitely something worth exploring further.",
+            "I appreciate your perspective. There are many ways to approach this challenge.",
+            "That's a thoughtful observation. The tech industry is constantly evolving with new ideas like this.",
+            "Absolutely! This is exactly the kind of discussion we need more of in the community.",
+            "I couldn't agree more! Your insights really add value to this conversation.",
+            "Fascinating perspective! Have you considered how this might impact the broader ecosystem?",
+            "This is such a relevant topic right now. Thanks for bringing it up!",
+            "Love this take! It's refreshing to see thoughtful discussions like this.",
+        ];
+
+        // Function to create a message element with StoreHub styling
+        function createMessageElement(message, isUser = false) {
+            const bgColor = isUser ? 'bg-blue-50 border-blue-200' : 'bg-white';
+            const authorColor = isUser ? 'text-storehub-blue' : 'text-storehub-blue';
+
+            return `
+                <div class="border-b border-gray-200 p-4 hover:bg-gray-50 transition-colors ${bgColor}">
+                    <div class="flex space-x-3">
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 bg-storehub-orange rounded-full flex items-center justify-center shadow-sm">
+                                <span class="text-white font-bold text-sm">${message.author.charAt(0).toUpperCase()}</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-semibold ${authorColor}">${message.author}</span>
+                                <span class="text-storehub-gray">@${message.author.toLowerCase()}</span>
+                                <span class="text-storehub-gray">·</span>
+                                <span class="text-storehub-gray text-sm">${message.timestamp}</span>
+                            </div>
+                            <div class="mt-2">
+                                <p class="text-storehub-blue text-[15px] leading-6 whitespace-pre-wrap">${message.content}</p>
+                            </div>
+                            <div class="flex items-center justify-between max-w-md mt-4">
+                                <button class="flex items-center space-x-2 text-storehub-gray hover:text-storehub-orange transition-colors group">
+                                    <div class="p-2 rounded-lg group-hover:bg-orange-50">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-medium">${message.replies || 0}</span>
+                                </button>
+                                <button class="flex items-center space-x-2 text-storehub-gray hover:text-green-500 transition-colors group">
+                                    <div class="p-2 rounded-lg group-hover:bg-green-50">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-medium">${message.retweets || 0}</span>
+                                </button>
+                                <button class="flex items-center space-x-2 text-storehub-gray hover:text-red-500 transition-colors group">
+                                    <div class="p-2 rounded-lg group-hover:bg-red-50">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                        </svg>
+                                    </div>
+                                    <span class="text-sm font-medium">${message.likes || 0}</span>
+                                </button>
+                                <button class="text-storehub-gray hover:text-storehub-orange transition-colors group">
+                                    <div class="p-2 rounded-lg group-hover:bg-orange-50">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
+                                        </svg>
+                                    </div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Function to show typing indicator with StoreHub styling
+        function showTypingIndicator() {
+            const typingHtml = `
+                <div id="typingIndicator" class="border-b border-gray-200 p-4 bg-orange-50">
+                    <div class="flex space-x-3">
+                        <div class="w-10 h-10 bg-storehub-orange rounded-full flex items-center justify-center shadow-sm">
+                            <span class="text-white font-bold text-sm">KB</span>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center space-x-2">
+                                <span class="font-semibold text-storehub-blue">KnowBuddy</span>
+                                <span class="text-storehub-gray">@knowbuddy</span>
+                                <span class="text-storehub-gray">·</span>
+                                <span class="text-storehub-gray text-sm">now</span>
+                            </div>
+                            <div class="mt-2 flex items-center space-x-1">
+                                <div class="w-2 h-2 bg-storehub-orange rounded-full animate-bounce-custom"></div>
+                                <div class="w-2 h-2 bg-storehub-orange rounded-full animate-bounce-custom"></div>
+                                <div class="w-2 h-2 bg-storehub-orange rounded-full animate-bounce-custom"></div>
+                                <span class="text-storehub-gray ml-2">Typing...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('messagesContainer').insertAdjacentHTML('beforeend', typingHtml);
+            document.getElementById('messagesContainer').scrollTop = document.getElementById('messagesContainer').scrollHeight;
+        }
+
+        // Function to remove typing indicator
+        function removeTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        // Function to send message
+        async function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const content = input.value.trim();
+
+            if (!content) return;
+
+            // Add user message
+            const userMessage = {
+                id: Date.now().toString(),
+                content: content,
+                author: 'Wendy',
+                timestamp: 'now',
+                likes: 0,
+                replies: 0,
+                retweets: 0,
+            };
+
+            document.getElementById('messagesContainer').insertAdjacentHTML('beforeend', createMessageElement(userMessage, true));
+            input.value = '';
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Simulate AI response delay
+            setTimeout(() => {
+                removeTypingIndicator();
+
+                // Add AI response
+                const randomResponse = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+                const aiMessage = {
+                    id: (Date.now() + 1).toString(),
+                    content: randomResponse,
+                    author: 'KnowBuddy',
+                    timestamp: 'now',
+                    likes: 0,
+                    replies: 0,
+                    retweets: 0,
+                };
+
+                document.getElementById('messagesContainer').insertAdjacentHTML('beforeend', createMessageElement(aiMessage));
+                document.getElementById('messagesContainer').scrollTop = document.getElementById('messagesContainer').scrollHeight;
+            }, 1000 + Math.random() * 2000);
+
+            // Scroll to bottom
+            document.getElementById('messagesContainer').scrollTop = document.getElementById('messagesContainer').scrollHeight;
+        }
+
+        // Initialize the page with sample messages
+        function initializeMessages() {
+            const container = document.getElementById('messagesContainer');
+            sampleMessages.forEach(message => {
+                container.insertAdjacentHTML('beforeend', createMessageElement(message));
+            });
+        }
+
+        // Add enter key support for message input
+        document.getElementById('messageInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Initialize the page
+        initializeMessages();
+    </script>
+</body>
+</html>

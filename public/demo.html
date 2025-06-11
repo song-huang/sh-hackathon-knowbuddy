@@ -7,23 +7,35 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
-            darkMode: 'class',
             theme: {
                 extend: {
                     colors: {
-                        dark: {
-                            50: '#f8fafc',
-                            100: '#f1f5f9',
-                            200: '#e2e8f0',
-                            300: '#cbd5e1',
-                            400: '#94a3b8',
-                            500: '#64748b',
-                            600: '#475569',
-                            700: '#334155',
-                            800: '#1e293b',
-                            900: '#0f172a',
-                            950: '#020617'
-                        }
+                        'storehub-orange': '#ff6b35',
+                        'storehub-orange-hover': '#e55a2b',
+                        'storehub-blue': '#34495e',
+                        'storehub-blue-hover': '#2c3e50',
+                        'storehub-gray': '#6c757d',
+                        'storehub-gray-light': '#adb5bd',
+                        'storehub-bg': '#f8f9fa',
+                    }
+                }
+            }
+        }
+    </script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'storehub-orange': '#ff6b35',
+                        'storehub-orange-hover': '#e55a2b',
+                        'storehub-blue': '#34495e',
+                        'storehub-blue-hover': '#2c3e50',
+                        'storehub-gray': '#6c757d',
+                        'storehub-gray-light': '#adb5bd',
+                        'storehub-bg': '#f8f9fa',
+                        'storehub-card': '#ffffff',
+                        'storehub-border': '#e1e8ed',
                     }
                 }
             }
@@ -45,17 +57,17 @@
             to { opacity: 1; transform: translateY(0); }
         }
         .glow {
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
         }
         .card-hover {
             transition: all 0.3s ease;
         }
         .card-hover:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
         .gradient-text {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(135deg, #ff6b35, #34495e);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -68,23 +80,38 @@
             50% { opacity: 1; }
             80%, 100% { opacity: 0; }
         }
+
+        /* Custom scrollbar for StoreHub style */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #adb5bd;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6c757d;
+        }
         .typing {
-            border-right: 2px solid #3b82f6;
+            border-right: 2px solid #ff6b35;
             animation: typing 2s steps(20) infinite;
         }
         @keyframes typing {
             0%, 50% { border-color: transparent; }
-            51%, 100% { border-color: #3b82f6; }
+            51%, 100% { border-color: #ff6b35; }
         }
     </style>
 </head>
-<body class="bg-dark-950 text-white min-h-screen">
+<body class="bg-white text-storehub-blue min-h-screen">
     <!-- Sidebar Navigation -->
-    <div class="fixed left-0 top-0 h-full w-64 bg-dark-900 border-r border-dark-700 z-10">
+    <div class="fixed left-0 top-0 h-full w-64 bg-storehub-bg border-r border-storehub-border z-10 shadow-sm">
         <div class="p-6">
             <!-- Logo -->
             <div class="flex items-center space-x-3 mb-8">
-                <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                <div class="w-8 h-8 bg-storehub-orange rounded-lg flex items-center justify-center shadow-sm">
                     <span class="text-white font-bold text-sm">PP</span>
                 </div>
                 <h1 class="text-xl font-bold gradient-text">ProspectPulse</h1>
@@ -92,25 +119,25 @@
 
             <!-- Navigation Menu -->
             <nav class="space-y-2">
-                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-blue-600 text-white">
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg bg-storehub-orange text-white shadow-sm">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
                     </svg>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-dark-800 transition-colors">
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-storehub-gray hover:text-storehub-blue hover:bg-storehub-card hover:shadow-sm transition-colors">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
                     </svg>
                     <span>Search</span>
                 </a>
-                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-dark-800 transition-colors">
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-storehub-gray hover:text-storehub-blue hover:bg-storehub-card hover:shadow-sm transition-colors">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                     <span>Analytics</span>
                 </a>
-                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-dark-800 transition-colors">
+                <a href="#" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-storehub-gray hover:text-storehub-blue hover:bg-storehub-card hover:shadow-sm transition-colors">
                     <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
                     </svg>
@@ -120,14 +147,14 @@
         </div>
 
         <!-- User Profile -->
-        <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-dark-700">
+        <div class="absolute bottom-0 left-0 right-0 p-6 border-t border-storehub-border bg-storehub-card">
             <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                <div class="w-8 h-8 bg-storehub-orange rounded-full flex items-center justify-center shadow-sm">
                     <span class="text-white text-sm font-medium">SH</span>
                 </div>
                 <div class="flex-1">
-                    <p class="text-sm font-medium text-white">StoreHub Sales</p>
-                    <p class="text-xs text-gray-400">sales@storehub.com</p>
+                    <p class="text-sm font-medium text-storehub-blue">StoreHub Sales</p>
+                    <p class="text-xs text-storehub-gray">sales@storehub.com</p>
                 </div>
             </div>
         </div>
@@ -136,18 +163,18 @@
     <!-- Main Content -->
     <div class="ml-64 min-h-screen">
         <!-- Top Header -->
-        <header class="bg-dark-900 border-b border-dark-700 px-6 py-4">
+        <header class="bg-storehub-card border-b border-storehub-border px-6 py-4 shadow-sm">
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-xl font-semibold text-white">AI Sales Intelligence</h2>
-                    <p class="text-sm text-gray-400">Discover and analyze restaurant prospects</p>
+                    <h2 class="text-xl font-semibold text-storehub-blue">AI Sales Intelligence</h2>
+                    <p class="text-sm text-storehub-gray">Discover and analyze restaurant prospects</p>
                 </div>
                 <div class="flex items-center space-x-4">
                     <div class="flex items-center space-x-2">
                         <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                        <span class="text-sm text-gray-400">AI Ready</span>
+                        <span class="text-sm text-storehub-gray">AI Ready</span>
                     </div>
-                    <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-white text-sm font-medium transition-colors">
+                    <button class="px-4 py-2 bg-storehub-orange hover:bg-storehub-orange-hover rounded-lg text-white text-sm font-medium transition-colors shadow-sm">
                         New Analysis
                     </button>
                 </div>
@@ -157,67 +184,67 @@
         <!-- Main Content Area -->
         <main class="p-6">
             <!-- Search Section -->
-            <div class="bg-dark-800 rounded-xl border border-dark-700 p-6 mb-6 card-hover">
+            <div class="bg-storehub-card rounded-xl border border-storehub-border p-6 mb-6 card-hover shadow-sm">
                 <div class="flex items-center space-x-3 mb-4">
-                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                    <div class="w-8 h-8 bg-storehub-orange rounded-lg flex items-center justify-center shadow-sm">
                         <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
                         </svg>
                     </div>
-                    <h2 class="text-lg font-semibold text-white">Restaurant Intelligence Search</h2>
+                    <h2 class="text-lg font-semibold text-storehub-blue">Restaurant Intelligence Search</h2>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label for="restaurant-name" class="block text-sm font-medium text-gray-300 mb-2">Restaurant Name</label>
+                        <label for="restaurant-name" class="block text-sm font-medium text-storehub-blue mb-2">Restaurant Name</label>
                         <input type="text" id="restaurant-name"
-                               class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                               class="w-full px-4 py-3 bg-storehub-bg border border-storehub-border rounded-lg text-storehub-blue placeholder-storehub-gray focus:outline-none focus:ring-2 focus:ring-storehub-orange focus:border-storehub-orange transition-all"
                                placeholder="Enter restaurant name...">
                     </div>
                     <div>
-                        <label for="location" class="block text-sm font-medium text-gray-300 mb-2">Location</label>
+                        <label for="location" class="block text-sm font-medium text-storehub-blue mb-2">Location</label>
                         <input type="text" id="location"
-                               class="w-full px-4 py-3 bg-dark-700 border border-dark-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                               class="w-full px-4 py-3 bg-storehub-bg border border-storehub-border rounded-lg text-storehub-blue placeholder-storehub-gray focus:outline-none focus:ring-2 focus:ring-storehub-orange focus:border-storehub-orange transition-all"
                                placeholder="City, State or Address...">
                     </div>
                 </div>
 
                 <div class="flex flex-col sm:flex-row gap-3">
                     <button onclick="analyzeRestaurant()"
-                            class="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 glow">
+                            class="flex-1 bg-storehub-orange hover:bg-storehub-orange-hover text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-2 glow shadow-sm">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
                         </svg>
                         <span>Analyze Restaurant</span>
                     </button>
                     <button onclick="clearResults()"
-                            class="px-6 py-3 bg-dark-700 hover:bg-dark-600 text-gray-300 hover:text-white border border-dark-600 rounded-lg transition-all duration-200">
+                            class="px-6 py-3 bg-storehub-bg hover:bg-gray-200 text-storehub-gray hover:text-storehub-blue border border-storehub-border rounded-lg transition-all duration-200">
                         Clear
                     </button>
                 </div>
             </div>
 
             <!-- Loading State -->
-            <div id="loadingState" class="hidden bg-dark-800 rounded-xl border border-dark-700 p-8 mb-6">
+            <div id="loadingState" class="hidden bg-storehub-card rounded-xl border border-storehub-border p-8 mb-6 shadow-sm">
                 <div class="flex items-center justify-center space-x-4">
                     <div class="flex space-x-1">
-                        <div class="w-2 h-2 bg-blue-500 rounded-full loading-dots" style="animation-delay: 0s"></div>
-                        <div class="w-2 h-2 bg-blue-500 rounded-full loading-dots" style="animation-delay: 0.2s"></div>
-                        <div class="w-2 h-2 bg-blue-500 rounded-full loading-dots" style="animation-delay: 0.4s"></div>
+                        <div class="w-2 h-2 bg-storehub-orange rounded-full loading-dots" style="animation-delay: 0s"></div>
+                        <div class="w-2 h-2 bg-storehub-orange rounded-full loading-dots" style="animation-delay: 0.2s"></div>
+                        <div class="w-2 h-2 bg-storehub-orange rounded-full loading-dots" style="animation-delay: 0.4s"></div>
                     </div>
-                    <span class="text-gray-300 typing">Analyzing restaurant data...</span>
+                    <span class="text-storehub-blue typing">Analyzing restaurant data...</span>
                 </div>
             </div>
 
             <!-- Results Section -->
             <div id="resultsSection" class="hidden space-y-6">
                 <!-- Company Overview Card -->
-                <div class="bg-dark-800 rounded-xl border border-dark-700 overflow-hidden card-hover">
-                    <div class="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
+                <div class="bg-storehub-card rounded-xl border border-storehub-border overflow-hidden card-hover shadow-sm">
+                    <div class="bg-gradient-to-r from-storehub-orange to-storehub-blue p-6">
                         <div class="flex items-center justify-between">
                             <div>
                                 <h3 class="text-2xl font-bold text-white mb-2" id="companyName">Restaurant Name</h3>
-                                <p class="text-blue-100" id="companyDescription">Restaurant description will appear here</p>
+                                <p class="text-orange-100" id="companyDescription">Restaurant description will appear here</p>
                             </div>
                             <div class="flex space-x-2">
                                 <button class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors">
@@ -238,61 +265,61 @@
                     <div class="p-6">
                         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-blue-400" id="foundedYear">2020</div>
-                                <div class="text-sm text-gray-400">Founded</div>
+                                <div class="text-2xl font-bold text-storehub-orange" id="foundedYear">2020</div>
+                                <div class="text-sm text-storehub-gray">Founded</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-green-400" id="businessSize">Medium</div>
-                                <div class="text-sm text-gray-400">Size</div>
+                                <div class="text-2xl font-bold text-green-500" id="businessSize">Medium</div>
+                                <div class="text-sm text-storehub-gray">Size</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-purple-400" id="cuisineType">Various</div>
-                                <div class="text-sm text-gray-400">Cuisine</div>
+                                <div class="text-2xl font-bold text-storehub-blue" id="cuisineType">Various</div>
+                                <div class="text-sm text-storehub-gray">Cuisine</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-2xl font-bold text-orange-400" id="priceRange">$$</div>
-                                <div class="text-sm text-gray-400">Price Range</div>
+                                <div class="text-2xl font-bold text-orange-500" id="priceRange">$$</div>
+                                <div class="text-sm text-storehub-gray">Price Range</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- Business Insights Card -->
-                <div class="bg-dark-800 rounded-xl border border-dark-700 p-6 card-hover">
+                <div class="bg-storehub-card rounded-xl border border-storehub-border p-6 card-hover shadow-sm">
                     <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                        <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center shadow-sm">
                             <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-white">Business Insights</h3>
+                        <h3 class="text-lg font-semibold text-storehub-blue">Business Insights</h3>
                     </div>
 
                     <div class="space-y-4">
                         <div>
-                            <h4 class="text-sm font-medium text-green-400 mb-2">Key Strengths</h4>
+                            <h4 class="text-sm font-medium text-green-500 mb-2">Key Strengths</h4>
                             <div class="space-y-2" id="keyStrengths">
                                 <div class="flex items-start space-x-2">
-                                    <div class="w-1.5 h-1.5 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
-                                    <span class="text-gray-300 text-sm">Strong brand recognition in local market</span>
+                                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                                    <span class="text-storehub-blue text-sm">Strong brand recognition in local market</span>
                                 </div>
                                 <div class="flex items-start space-x-2">
-                                    <div class="w-1.5 h-1.5 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
-                                    <span class="text-gray-300 text-sm">Established customer base and loyalty</span>
+                                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                                    <span class="text-storehub-blue text-sm">Established customer base and loyalty</span>
                                 </div>
                             </div>
                         </div>
 
                         <div>
-                            <h4 class="text-sm font-medium text-yellow-400 mb-2">Growth Opportunities</h4>
+                            <h4 class="text-sm font-medium text-yellow-500 mb-2">Growth Opportunities</h4>
                             <div class="space-y-2" id="opportunities">
                                 <div class="flex items-start space-x-2">
-                                    <div class="w-1.5 h-1.5 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div>
-                                    <span class="text-gray-300 text-sm">Digital ordering system implementation</span>
+                                    <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
+                                    <span class="text-storehub-blue text-sm">Digital ordering system implementation</span>
                                 </div>
                                 <div class="flex items-start space-x-2">
-                                    <div class="w-1.5 h-1.5 bg-yellow-400 rounded-full mt-2 flex-shrink-0"></div>
-                                    <span class="text-gray-300 text-sm">Enhanced analytics and reporting</span>
+                                    <div class="w-1.5 h-1.5 bg-yellow-500 rounded-full mt-2 flex-shrink-0"></div>
+                                    <span class="text-storehub-blue text-sm">Enhanced analytics and reporting</span>
                                 </div>
                             </div>
                         </div>
@@ -300,62 +327,62 @@
                 </div>
 
                 <!-- Sales Tools Card -->
-                <div class="bg-dark-800 rounded-xl border border-dark-700 p-6 card-hover">
+                <div class="bg-storehub-card rounded-xl border border-storehub-border p-6 card-hover shadow-sm">
                     <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                        <div class="w-8 h-8 bg-storehub-blue rounded-lg flex items-center justify-center shadow-sm">
                             <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-white">Sales Tools</h3>
+                        <h3 class="text-lg font-semibold text-storehub-blue">Sales Tools</h3>
                     </div>
 
                     <div class="space-y-6">
                         <!-- Conversation Starters -->
                         <div>
-                            <h4 class="text-sm font-medium text-purple-400 mb-3">Conversation Starters</h4>
+                            <h4 class="text-sm font-medium text-storehub-blue mb-3">Conversation Starters</h4>
                             <div class="space-y-3" id="conversationStarters">
-                                <div class="bg-dark-700 border border-dark-600 rounded-lg p-4">
+                                <div class="bg-storehub-bg border border-storehub-border rounded-lg p-4">
                                     <div class="flex items-start space-x-3">
-                                        <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <div class="w-6 h-6 bg-storehub-orange rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
                                             <span class="text-white text-xs font-bold">1</span>
                                         </div>
-                                        <p class="text-gray-300 text-sm">"I noticed your restaurant has been growing steadily. How are you currently managing your POS operations during peak hours?"</p>
+                                        <p class="text-storehub-blue text-sm">"I noticed your restaurant has been growing steadily. How are you currently managing your POS operations during peak hours?"</p>
                                     </div>
-                                    <button class="mt-3 text-xs text-blue-400 hover:text-blue-300 transition-colors">Copy to clipboard</button>
+                                    <button class="mt-3 text-xs text-storehub-orange hover:text-storehub-orange-hover transition-colors">Copy to clipboard</button>
                                 </div>
-                                <div class="bg-dark-700 border border-dark-600 rounded-lg p-4">
+                                <div class="bg-storehub-bg border border-storehub-border rounded-lg p-4">
                                     <div class="flex items-start space-x-3">
-                                        <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                        <div class="w-6 h-6 bg-storehub-orange rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
                                             <span class="text-white text-xs font-bold">2</span>
                                         </div>
-                                        <p class="text-gray-300 text-sm">"I'd love to show you how StoreHub can help streamline your operations and provide better insights into your business performance."</p>
+                                        <p class="text-storehub-blue text-sm">"I'd love to show you how StoreHub can help streamline your operations and provide better insights into your business performance."</p>
                                     </div>
-                                    <button class="mt-3 text-xs text-blue-400 hover:text-blue-300 transition-colors">Copy to clipboard</button>
+                                    <button class="mt-3 text-xs text-storehub-orange hover:text-storehub-orange-hover transition-colors">Copy to clipboard</button>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Objection Handling -->
                         <div>
-                            <h4 class="text-sm font-medium text-red-400 mb-3">Potential Objections & Responses</h4>
+                            <h4 class="text-sm font-medium text-red-500 mb-3">Potential Objections & Responses</h4>
                             <div class="space-y-3" id="objectionHandling">
-                                <div class="bg-dark-700 border border-dark-600 rounded-lg p-4">
+                                <div class="bg-storehub-bg border border-storehub-border rounded-lg p-4">
                                     <div class="mb-3">
                                         <div class="flex items-center space-x-2 mb-2">
-                                            <div class="w-2 h-2 bg-red-400 rounded-full"></div>
-                                            <span class="text-red-400 text-sm font-medium">Objection:</span>
+                                            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                                            <span class="text-red-500 text-sm font-medium">Objection:</span>
                                         </div>
-                                        <p class="text-gray-300 text-sm ml-4">"We already have a POS system that works fine."</p>
+                                        <p class="text-storehub-blue text-sm ml-4">"We already have a POS system that works fine."</p>
                                     </div>
                                     <div>
                                         <div class="flex items-center space-x-2 mb-2">
-                                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                                            <span class="text-green-400 text-sm font-medium">Response:</span>
+                                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                            <span class="text-green-500 text-sm font-medium">Response:</span>
                                         </div>
-                                        <p class="text-gray-300 text-sm ml-4">"I understand your current system works. StoreHub integrates seamlessly with existing infrastructure while providing advanced analytics that can increase efficiency by 20-30%."</p>
+                                        <p class="text-storehub-blue text-sm ml-4">"I understand your current system works. StoreHub integrates seamlessly with existing infrastructure while providing advanced analytics that can increase efficiency by 20-30%."</p>
                                     </div>
-                                    <button class="mt-3 text-xs text-blue-400 hover:text-blue-300 transition-colors">Copy response</button>
+                                    <button class="mt-3 text-xs text-storehub-orange hover:text-storehub-orange-hover transition-colors">Copy response</button>
                                 </div>
                             </div>
                         </div>
@@ -363,51 +390,51 @@
                 </div>
 
                 <!-- Data Sources Card -->
-                <div class="bg-dark-800 rounded-xl border border-dark-700 p-6 card-hover">
+                <div class="bg-storehub-card rounded-xl border border-storehub-border p-6 card-hover shadow-sm">
                     <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
+                        <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center shadow-sm">
                             <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
                             </svg>
                         </div>
-                        <h3 class="text-lg font-semibold text-white">Data Sources</h3>
+                        <h3 class="text-lg font-semibold text-storehub-blue">Data Sources</h3>
                     </div>
 
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="dataSources">
-                        <div class="text-center p-3 bg-dark-700 rounded-lg">
-                            <div class="w-8 h-8 bg-blue-600 rounded-full mx-auto mb-2 flex items-center justify-center">
+                        <div class="text-center p-3 bg-storehub-bg rounded-lg border border-storehub-border">
+                            <div class="w-8 h-8 bg-blue-500 rounded-full mx-auto mb-2 flex items-center justify-center shadow-sm">
                                 <span class="text-white text-xs font-bold">Y</span>
                             </div>
-                            <div class="text-sm font-medium text-white">Yelp</div>
-                            <div class="text-xs text-gray-400">Reviews & Info</div>
+                            <div class="text-sm font-medium text-storehub-blue">Yelp</div>
+                            <div class="text-xs text-storehub-gray">Reviews & Info</div>
                         </div>
-                        <div class="text-center p-3 bg-dark-700 rounded-lg">
-                            <div class="w-8 h-8 bg-blue-800 rounded-full mx-auto mb-2 flex items-center justify-center">
+                        <div class="text-center p-3 bg-storehub-bg rounded-lg border border-storehub-border">
+                            <div class="w-8 h-8 bg-blue-700 rounded-full mx-auto mb-2 flex items-center justify-center shadow-sm">
                                 <span class="text-white text-xs font-bold">F</span>
                             </div>
-                            <div class="text-sm font-medium text-white">Facebook</div>
-                            <div class="text-xs text-gray-400">Social Presence</div>
+                            <div class="text-sm font-medium text-storehub-blue">Facebook</div>
+                            <div class="text-xs text-storehub-gray">Social Presence</div>
                         </div>
-                        <div class="text-center p-3 bg-dark-700 rounded-lg">
-                            <div class="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full mx-auto mb-2 flex items-center justify-center">
+                        <div class="text-center p-3 bg-storehub-bg rounded-lg border border-storehub-border">
+                            <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mx-auto mb-2 flex items-center justify-center shadow-sm">
                                 <span class="text-white text-xs font-bold">I</span>
                             </div>
-                            <div class="text-sm font-medium text-white">Instagram</div>
-                            <div class="text-xs text-gray-400">Visual Content</div>
+                            <div class="text-sm font-medium text-storehub-blue">Instagram</div>
+                            <div class="text-xs text-storehub-gray">Visual Content</div>
                         </div>
-                        <div class="text-center p-3 bg-dark-700 rounded-lg">
-                            <div class="w-8 h-8 bg-red-600 rounded-full mx-auto mb-2 flex items-center justify-center">
+                        <div class="text-center p-3 bg-storehub-bg rounded-lg border border-storehub-border">
+                            <div class="w-8 h-8 bg-red-500 rounded-full mx-auto mb-2 flex items-center justify-center shadow-sm">
                                 <span class="text-white text-xs font-bold">N</span>
                             </div>
-                            <div class="text-sm font-medium text-white">Google News</div>
-                            <div class="text-xs text-gray-400">Recent Updates</div>
+                            <div class="text-sm font-medium text-storehub-blue">Google News</div>
+                            <div class="text-xs text-storehub-gray">Recent Updates</div>
                         </div>
                     </div>
 
-                    <div class="mt-4 p-3 bg-green-900/20 border border-green-700 rounded-lg">
+                    <div class="mt-4 p-3 bg-green-50 border border-green-200 rounded-lg">
                         <div class="flex items-center space-x-2">
-                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                            <span class="text-sm text-green-300">All data sources active - No Google API keys required</span>
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span class="text-sm text-green-700">All data sources active - No Google API keys required</span>
                         </div>
                     </div>
                 </div>
@@ -417,13 +444,13 @@
     </div>
 
     <!-- Footer -->
-    <footer class="ml-64 bg-dark-900 border-t border-dark-700 mt-8">
+    <footer class="ml-64 bg-storehub-card border-t border-storehub-border mt-8 shadow-sm">
         <div class="px-6 py-4">
-            <div class="flex items-center justify-between text-sm text-gray-400">
+            <div class="flex items-center justify-between text-sm text-storehub-gray">
                 <p>&copy; 2024 ProspectPulse. Built for StoreHub Sales Team.</p>
                 <div class="flex items-center space-x-4">
                     <span>Ready for deployment</span>
-                    <div class="w-2 h-2 bg-green-400 rounded-full"></div>
+                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                 </div>
             </div>
         </div>
