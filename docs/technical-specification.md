@@ -24,10 +24,10 @@ ProspectPulse 是一款为 StoreHub 销售团队设计的 AI 驱动销售智能�
 ProspectPulse 采用现代化的前后端分离架构，结合 AI 能力，实现快速、高效的数据处理和洞察生成。
 
 ```
-[前端: Next.js] ←→ [后端: Node.js/Express] ←→ [外部 API 和数据源]
-                                          ↑
-                                          ↓
-                                   [Groq LLM API]
+[前端: Next.js] ←→ [后端: Next.js API Routes] ←→ [外部 API 和数据源]
+                                              ↑
+                                              ↓
+                                       [Google Gemini API]
 ```
 
 ### 2.2 技术栈详情
@@ -39,16 +39,16 @@ ProspectPulse 采用现代化的前后端分离架构，结合 AI 能力，实�
 - **UI 组件**: 自定义组件 + Headless UI
 
 #### 后端
-- **服务框架**: Node.js 18+ 与 Express 4
-- **API 集成**: Axios 用于 HTTP 请求
-- **数据处理**: 自定义中间件
+- **服务框架**: Next.js 15+ API Routes
+- **API 集成**: Fetch API 用于 HTTP 请求
+- **数据处理**: 自定义中间件和服务层
 
 #### AI 与数据
-- **LLM 提供商**: Groq API
-- **模型选择**: Llama-3 或 Gemini
+- **LLM 提供商**: Google Gemini API
+- **模型选择**: Gemini-1.5-Flash
 - **数据源**:
   - Serper API (Google 搜索结果)
-  - 网页抓取 (Cheerio)
+  - 网页抓取 (基础实现)
   - 社交媒体 API (如可用)
   - 评论聚合 API
 
@@ -184,8 +184,8 @@ POST /api/prospect/analyze
 
 ### 4.2 外部 API 集成
 
-#### 4.2.1 Groq LLM API
-用于生成洞察和销售建议
+#### 4.2.1 Google Gemini API
+用于生成洞察和销售建议，使用 Gemini-1.5-Flash 模型
 
 #### 4.2.2 Serper API
 用于获取结构化搜索结果
@@ -315,9 +315,9 @@ interface DataSource {
 - 开发环境配置
 
 #### 7.1.2 后端开发 (2 小时)
-- Express 服务器设置
+- Next.js API Routes 设置
 - 数据收集端点实现
-- LLM 集成
+- Gemini API 集成
 
 #### 7.1.3 前端开发 (2 小时)
 - 基础 UI 组件
@@ -335,10 +335,10 @@ interface DataSource {
 ### 7.2 团队分工
 
 #### 7.2.1 开发者 1 (后端)
-- Express 服务器
+- Next.js API Routes
 - 数据收集服务
 - API 集成
-- LLM 提示工程
+- Gemini AI 提示工程
 
 #### 7.2.2 开发者 2 (前端)
 - Next.js 应用
@@ -365,7 +365,7 @@ interface DataSource {
 ### 8.2 LLM 响应时间
 **挑战**: 确保 AI 生成速度足够快，适合销售场景使用。
 **解决方案**:
-- 使用 Groq 的高性能端点
+- 使用 Gemini-1.5-Flash 的高性能模型
 - 优化提示以减少令牌数量
 - 实施分阶段加载和渐进式 UI
 - 预计算常见查询的结果
