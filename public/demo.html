@@ -498,14 +498,25 @@
                 console.error('Error analyzing restaurant:', error);
                 loadingState.classList.add('hidden');
 
-                // Show fallback demo data
-                showResults(restaurantName, location);
-                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                // Show search results even if analysis fails
+                if (searchData) {
+                    showSearchResults(searchData, restaurantName, location);
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-                // Show error message
-                setTimeout(() => {
-                    alert('Using demo data. For full functionality, please ensure API keys are configured.');
-                }, 500);
+                    // Show info message instead of error
+                    setTimeout(() => {
+                        alert('Search completed successfully! AI analysis is temporarily unavailable, but you can see the collected data below.');
+                    }, 500);
+                } else {
+                    // Show fallback demo data only if search also failed
+                    showResults(restaurantName, location);
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+                    // Show error message
+                    setTimeout(() => {
+                        alert('Using demo data. For full functionality, please ensure API keys are configured.');
+                    }, 500);
+                }
             }
         }
 
@@ -611,6 +622,83 @@
                         <button onclick="copyToClipboard('${objection.response.replace(/'/g, "\\'")}', this)" class="mt-3 text-xs text-blue-400 hover:text-blue-300 transition-colors">Copy response</button>
                     </div>
                 `).join('');
+            }
+        }
+
+        function showSearchResults(searchData, restaurantName, location) {
+            const resultsSection = document.getElementById('results');
+            resultsSection.classList.remove('hidden');
+
+            // Update company info with real data
+            const businessData = searchData.comprehensiveData.businessData;
+            document.getElementById('companyName').textContent = businessData?.name || restaurantName;
+            document.getElementById('companyDescription').textContent = businessData?.description || `${restaurantName} is a restaurant business${location ? ' located in ' + location : ''} with strong local presence and growth potential.`;
+
+            // Update stats with real data
+            document.getElementById('foundedYear').textContent = businessData?.founded || 'N/A';
+            document.getElementById('businessSize').textContent = businessData?.size || 'Unknown';
+            document.getElementById('cuisineType').textContent = businessData?.cuisine?.join(', ') || 'Restaurant';
+            document.getElementById('priceRange').textContent = businessData?.priceRange || 'N/A';
+
+            // Show basic insights instead of AI analysis
+            document.getElementById('businessInsights').innerHTML = `
+                <div class="space-y-4">
+                    <div class="p-4 bg-green-900/20 border border-green-700 rounded-lg">
+                        <h4 class="font-semibold text-green-300 mb-2">✅ Data Collection Successful</h4>
+                        <p class="text-sm text-gray-300">Successfully collected business information from multiple sources including search results, social media links, and news data.</p>
+                    </div>
+                    ${businessData?.reviews?.length > 0 ? `
+                    <div class="p-4 bg-blue-900/20 border border-blue-700 rounded-lg">
+                        <h4 class="font-semibold text-blue-300 mb-2">📊 Review Summary</h4>
+                        <p class="text-sm text-gray-300">Found ${businessData.reviews.length} review(s) with an average rating of ${businessData.rating || 'N/A'} stars.</p>
+                    </div>
+                    ` : ''}
+                    ${searchData.comprehensiveData.newsData?.length > 0 ? `
+                    <div class="p-4 bg-purple-900/20 border border-purple-700 rounded-lg">
+                        <h4 class="font-semibold text-purple-300 mb-2">📰 Recent News</h4>
+                        <p class="text-sm text-gray-300">Found ${searchData.comprehensiveData.newsData.length} recent news article(s) about this business.</p>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+
+            // Show conversation starters with real data
+            const starters = [
+                `"I noticed ${businessData?.name || restaurantName} has been building a strong reputation${location ? ' in ' + location : ''}. How are you currently managing your POS operations during peak hours?"`,
+                `"With ${businessData?.name || restaurantName}'s focus on customer experience, I'd love to show you how StoreHub can help streamline your operations and provide better insights into your business performance."`,
+                `"I see ${businessData?.name || restaurantName} has a ${businessData?.priceRange || 'competitive'} price point. How are you currently handling payment processing and inventory management?"`
+            ];
+
+            const startersContainer = document.getElementById('conversationStarters');
+            startersContainer.innerHTML = starters.map((starter, index) => `
+                <div class="bg-dark-700 border border-dark-600 rounded-lg p-4">
+                    <p class="text-gray-300 mb-3">${starter}</p>
+                    <button onclick="copyToClipboard('${starter.replace(/'/g, "\\'")}', this)" class="text-blue-400 hover:text-blue-300 text-sm">
+                        📋 Copy
+                    </button>
+                </div>
+            `).join('');
+
+            // Show data sources
+            if (searchData.comprehensiveData.sources) {
+                const sourcesContainer = document.getElementById('dataSources');
+                const sourceTypes = [...new Set(searchData.comprehensiveData.sources.map(s => s.type))];
+
+                let sourcesHtml = '';
+                sourceTypes.forEach(type => {
+                    const icon = type === 'search' ? 'S' : type === 'news' ? 'N' : type === 'social' ? 'F' : 'D';
+                    const color = type === 'search' ? 'bg-blue-600' : type === 'news' ? 'bg-red-600' : type === 'social' ? 'bg-green-600' : 'bg-gray-600';
+                    sourcesHtml += `
+                        <div class="text-center p-3 bg-dark-700 rounded-lg">
+                            <div class="w-8 h-8 ${color} rounded-full mx-auto mb-2 flex items-center justify-center">
+                                <span class="text-white text-xs font-bold">${icon}</span>
+                            </div>
+                            <div class="text-sm font-medium text-white">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+                            <div class="text-xs text-green-400">✓ Active</div>
+                        </div>
+                    `;
+                });
+                sourcesContainer.innerHTML = sourcesHtml;
             }
         }
 
