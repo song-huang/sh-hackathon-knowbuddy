@@ -1,0 +1,65 @@
+/* Custom Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes typing {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+}
+
+@keyframes lightningFlash {
+    0% { opacity: 0.3; transform: rotate(0deg); }
+    10% { opacity: 1; transform: rotate(0deg); }
+    20% { opacity: 0.3; transform: rotate(0deg); }
+    30% { opacity: 1; transform: rotate(0deg); }
+    40% { opacity: 0.3; transform: rotate(0deg); }
+    50% { opacity: 0.3; transform: rotate(45deg); }
+    100% { opacity: 0.3; transform: rotate(360deg); }
+}
+
+/* Custom Classes */
+.gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.ai-glow {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+}
+
+.typing-indicator {
+    animation: typing 1.5s infinite;
+}
+
+.lightning-flash {
+    animation: lightningFlash 2s infinite;
+}
+
+/* Animation Classes */
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.3s ease-out;
+}

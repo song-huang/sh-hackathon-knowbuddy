@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProspectPulse - AI Sales Intelligence</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/js/config.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body class="bg-background min-h-screen">
+    <!-- Hero Section with Search -->
+    <div id="heroSection" class="min-h-screen gradient-bg relative overflow-hidden">
+        <!-- Animated Background Elements -->
+        <div class="absolute inset-0">
+            <div class="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse-slow"></div>
+            <div class="absolute bottom-20 right-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 1s;"></div>
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
+        </div>
+
+        <!-- Header -->
+        <header class="relative z-10 p-6">
+            <div class="flex items-center justify-between max-w-7xl mx-auto">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-lg">
+                        <span class="text-white font-bold text-lg">PP</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">ProspectPulse</h1>
+                        <p class="text-white/70 text-sm">AI Sales Intelligence</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-2 text-white/80">
+                    <div class="w-2 h-2 bg-success rounded-full animate-pulse"></div>
+                    <span class="text-sm">AI Ready</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Search Interface -->
+        <div class="relative z-10 flex items-center justify-center min-h-[80vh] px-6">
+            <div class="w-full max-w-2xl">
+                <!-- Main Title -->
+                <div class="text-center mb-12 animate-fade-in">
+                    <h2 class="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                        Know Your
+                        <span class="bg-gradient-to-r from-primary to-yellow-400 bg-clip-text text-transparent">
+                            Prospects
+                        </span>
+                        <br>In Seconds
+                    </h2>
+                    <p class="text-xl text-white/80 mb-8 max-w-lg mx-auto">
+                        AI-powered sales intelligence that transforms company names into actionable insights
+                    </p>
+                </div>
+
+                <!-- Search Interface -->
+                <div id="searchContainer" class="glass-effect rounded-2xl p-8 shadow-2xl ai-glow animate-scale-in">
+                    <div class="flex flex-col space-y-6">
+                        <!-- Single Input Field -->
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 256 256">
+                                    <path d="m229.66,218.34-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
+                                </svg>
+                            </div>
+                            <input
+                                type="text"
+                                id="companyInput"
+                                placeholder="Enter company name or website (e.g., KFC, McDonald's, starbucks.com)"
+                                class="w-full pl-12 pr-4 py-3.5 text-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                                autocomplete="off"
+                            />
+                        </div>
+
+                        <!-- Action Button -->
+                        <button
+                            id="analyzeBtn"
+                            class="w-full bg-primary hover:bg-primary-hover text-white font-medium py-3.5 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2 text-base"
+                        >
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"/>
+                            </svg>
+                            <span>Analyze with AI</span>
+                        </button>
+
+                        <!-- Quick Examples -->
+                        <div class="flex flex-wrap gap-2 justify-center">
+                            <span class="text-sm text-gray-500">Try:</span>
+                            <button onclick="setExample('KFC Singapore')" class="text-sm text-primary hover:text-primary-hover font-medium">KFC Singapore</button>
+                            <span class="text-gray-300">•</span>
+                            <button onclick="setExample('Starbucks')" class="text-sm text-primary hover:text-primary-hover font-medium">Starbucks</button>
+                            <span class="text-gray-300">•</span>
+                            <button onclick="setExample('McDonald\'s Malaysia')" class="text-sm text-primary hover:text-primary-hover font-medium">McDonald's Malaysia</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Features Preview -->
+                <div id="featuresGrid" class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 animate-slide-up">
+                    <!-- Features will be dynamically loaded -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingSection" class="hidden min-h-screen bg-white flex items-center justify-center">
+        <div class="text-center max-w-md mx-auto px-6">
+            <div class="relative mb-8">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+                    <svg class="w-10 h-10 text-primary lightning-flash" fill="currentColor" viewBox="0 0 256 256">
+                        <path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"/>
+                    </svg>
+                </div>
+                <div class="absolute -inset-2 bg-primary/5 rounded-full animate-ping"></div>
+            </div>
+            <h3 class="text-2xl font-semibold text-gray-800 mb-6">AI is analyzing...</h3>
+            <div id="loadingSteps" class="space-y-4 text-left max-w-xs mx-auto">
+                <div class="flex items-center space-x-3">
+                    <div class="w-2 h-2 bg-success rounded-full"></div>
+                    <span class="text-gray-700 text-sm">Searching company website...</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="w-2 h-2 bg-gray-300 rounded-full typing-indicator"></div>
+                    <span class="text-gray-400 text-sm">Analyzing social media presence...</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                    <span class="text-gray-400 text-sm">Gathering recent news and updates...</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="w-2 h-2 bg-gray-300 rounded-full"></div>
+                    <span class="text-gray-400 text-sm">Generating sales insights...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="resultsSection" class="hidden min-h-screen bg-gray-50 py-0">
+        <!-- Results content will be dynamically inserted here -->
+    </div>
+
+    <!-- Scripts -->
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
