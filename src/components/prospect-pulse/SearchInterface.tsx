@@ -26,7 +26,7 @@ export default function SearchInterface({ onSearch, error }: SearchInterfaceProp
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
             Know Your
-            <span className="bg-gradient-to-r from-primary to-yellow-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#ff6b35] to-[#ff8c42] bg-clip-text text-transparent">
               {' '}Prospects
             </span>
             <br />In Seconds
