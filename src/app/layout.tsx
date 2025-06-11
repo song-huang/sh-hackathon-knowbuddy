@@ -13,8 +13,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ProspectPulse - AI Sales Intelligence for Restaurants",
+  title: "StoreHub Prospects - AI Sales Intelligence",
   description: "AI-powered sales intelligence tool for StoreHub sales team. Get instant insights, conversation starters, and sales strategies for restaurant prospects.",
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 export default function RootLayout({
