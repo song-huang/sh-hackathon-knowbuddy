@@ -1,6 +1,10 @@
 ---
-description:
-globs:
+description: 
+globs: 
+alwaysApply: false
+---
+description: 
+globs: 
 alwaysApply: true
 ---
 # AI-Powered Coding Rules & Best Practices
