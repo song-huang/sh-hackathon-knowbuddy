@@ -1,0 +1,22 @@
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Orange background -->
+  <rect width="200" height="200" fill="#FF6B35" rx="20"/>
+  
+  <!-- StoreHub H logo in white -->
+  <g transform="translate(40, 40)">
+    <!-- Left vertical bar -->
+    <rect x="0" y="0" width="20" height="120" fill="white"/>
+    
+    <!-- Right vertical bar -->
+    <rect x="100" y="0" width="20" height="120" fill="white"/>
+    
+    <!-- Horizontal connecting bar -->
+    <rect x="20" y="50" width="80" height="20" fill="white"/>
+    
+    <!-- Top right extension -->
+    <rect x="80" y="0" width="20" height="30" fill="white"/>
+    
+    <!-- Bottom left extension -->
+    <rect x="20" y="90" width="20" height="30" fill="white"/>
+  </g>
+</svg>
