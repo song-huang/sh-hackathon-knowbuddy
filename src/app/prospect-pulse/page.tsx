@@ -53,7 +53,7 @@ export default function ProspectPulsePage() {
       if (!searchResponse.ok) {
         throw new Error('Search failed');
       }
-      
+
       const searchResult: SearchResponse = await searchResponse.json();
       setSearchData(searchResult);
 
@@ -106,10 +106,10 @@ export default function ProspectPulsePage() {
       if (sidebarOpen && window.innerWidth < 1024) {
         const sidebar = document.getElementById('mobileSidebar');
         const toggle = document.getElementById('sidebarToggle');
-        
-        if (sidebar && toggle && 
-            !sidebar.contains(event.target as Node) && 
-            !toggle.contains(event.target as Node)) {
+
+        if (sidebar && toggle &&
+          !sidebar.contains(event.target as Node) &&
+          !toggle.contains(event.target as Node)) {
           setSidebarOpen(false);
         }
       }
@@ -123,10 +123,10 @@ export default function ProspectPulsePage() {
     <div className="bg-background min-h-screen">
       {/* Mobile Sidebar */}
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
-      
+
       {/* Sidebar Overlay */}
       {sidebarOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setSidebarOpen(false)}
         />
@@ -134,15 +134,15 @@ export default function ProspectPulsePage() {
 
       {/* Main Content */}
       {currentView === 'search' && (
-        <div className="min-h-screen gradient-bg relative overflow-hidden">
+        <div className="min-h-screen pb-10 gradient-bg relative overflow-hidden">
           {/* Animated Background Elements */}
           <div className="absolute inset-0">
             <div className="absolute top-20 left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse-slow" />
-            <div 
+            <div
               className="absolute bottom-20 right-20 w-96 h-96 bg-blue-400/10 rounded-full blur-3xl animate-pulse-slow"
               style={{ animationDelay: '1s' }}
             />
-            <div 
+            <div
               className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-purple-400/10 rounded-full blur-3xl animate-pulse-slow"
               style={{ animationDelay: '2s' }}
             />
@@ -154,14 +154,14 @@ export default function ProspectPulsePage() {
       )}
 
       {currentView === 'loading' && (
-        <LoadingState 
-          steps={loadingSteps} 
-          currentStep={loadingStep} 
+        <LoadingState
+          steps={loadingSteps}
+          currentStep={loadingStep}
         />
       )}
 
       {currentView === 'results' && searchData && analysisData && (
-        <ResultsSection 
+        <ResultsSection
           searchData={searchData}
           analysisData={analysisData}
           onNewSearch={handleNewSearch}
