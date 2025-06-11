@@ -1,6 +1,8 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { ReviewData, DataSource, NewsData } from '@/types';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+import { HttpProxyAgent } from 'http-proxy-agent';
 
 interface FreeBusinessData {
   name: string;
@@ -24,9 +26,30 @@ interface FreeBusinessData {
 class FreeDataSourcesService {
   private userAgent = 'Mozilla/5.0 (compatible; ProspectPulse/1.0; +https://storehub.com)';
   private serperApiKey: string;
+  private axiosConfig: any;
+  private fetchOptions: any;
 
   constructor() {
     this.serperApiKey = process.env.SERPER_API_KEY || '';
+
+    // Configure proxy for axios and fetch if available
+    const proxyUrl = process.env.HTTP_PROXY || process.env.http_proxy;
+    this.axiosConfig = {
+      headers: { 'User-Agent': this.userAgent },
+      timeout: 15000,
+    };
+    this.fetchOptions = {};
+
+    if (proxyUrl) {
+      console.log('Configuring FreeDataSources with proxy:', proxyUrl);
+      const agent = proxyUrl.startsWith('https:')
+        ? new HttpsProxyAgent(proxyUrl)
+        : new HttpProxyAgent(proxyUrl);
+
+      this.axiosConfig.httpAgent = agent;
+      this.axiosConfig.httpsAgent = agent;
+      this.fetchOptions.agent = agent;
+    }
   }
 
   async collectBusinessData(businessName: string, location?: string): Promise<{
@@ -102,6 +125,7 @@ class FreeDataSourcesService {
           q: query,
           num: 5,
         }),
+        ...this.fetchOptions,
       });
 
       const data = await response.json();
@@ -145,6 +169,7 @@ class FreeDataSourcesService {
           q: facebookQuery,
           num: 3,
         }),
+        ...this.fetchOptions,
       });
 
       const fbData = await fbResponse.json();
@@ -167,6 +192,7 @@ class FreeDataSourcesService {
           q: instagramQuery,
           num: 3,
         }),
+        ...this.fetchOptions,
       });
 
       const igData = await igResponse.json();
@@ -202,6 +228,7 @@ class FreeDataSourcesService {
           q: reviewQuery,
           num: 5,
         }),
+        ...this.fetchOptions,
       });
 
       const data = await response.json();
@@ -255,10 +282,7 @@ class FreeDataSourcesService {
 
   private async scrapeWebsiteInfo(url: string) {
     try {
-      const response = await axios.get(url, {
-        headers: { 'User-Agent': this.userAgent },
-        timeout: 10000,
-      });
+      const response = await axios.get(url, this.axiosConfig);
 
       const $ = cheerio.load(response.data);
       

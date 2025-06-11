@@ -1,19 +1,107 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import { BusinessInsights, SalesTools, ProspectProfile, MenuData, ReviewData, NewsData } from '@/types';
 import { reviewAnalysisService } from './reviewAnalysis';
+import axios from 'axios';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+import { HttpProxyAgent } from 'http-proxy-agent';
+
+interface GeminiRequest {
+  contents: Array<{
+    parts: Array<{
+      text: string;
+    }>;
+  }>;
+  generationConfig?: {
+    temperature?: number;
+    topK?: number;
+    topP?: number;
+    maxOutputTokens?: number;
+  };
+}
+
+interface GeminiResponse {
+  candidates: Array<{
+    content: {
+      parts: Array<{
+        text: string;
+      }>;
+    };
+    finishReason: string;
+  }>;
+}
 
 class GeminiService {
-  private genAI: GoogleGenerativeAI;
-  private model: any;
+  private apiKey: string;
+  private baseUrl: string;
+  private axiosInstance: any;
 
   constructor() {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
+    this.apiKey = process.env.GEMINI_API_KEY;
+    if (!this.apiKey) {
       throw new Error('GEMINI_API_KEY is not configured');
     }
 
-    this.genAI = new GoogleGenerativeAI(apiKey);
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    this.baseUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+
+    // Configure axios with proxy support
+    const proxyUrl = process.env.HTTP_PROXY || process.env.http_proxy;
+    const axiosConfig: any = {
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json',
+        'x-goog-api-key': this.apiKey,
+      },
+    };
+
+    if (proxyUrl) {
+      console.log('Configuring Gemini API with axios and proxy:', proxyUrl);
+      const agent = proxyUrl.startsWith('https:')
+        ? new HttpsProxyAgent(proxyUrl)
+        : new HttpProxyAgent(proxyUrl);
+
+      axiosConfig.httpAgent = agent;
+      axiosConfig.httpsAgent = agent;
+    }
+
+    this.axiosInstance = axios.create(axiosConfig);
+  }
+
+  private async callGeminiAPI(prompt: string): Promise<string> {
+    const requestBody: GeminiRequest = {
+      contents: [
+        {
+          parts: [
+            {
+              text: prompt
+            }
+          ]
+        }
+      ],
+      generationConfig: {
+        temperature: 0.7,
+        topK: 40,
+        topP: 0.95,
+        maxOutputTokens: 2048,
+      }
+    };
+
+    try {
+      console.log('Making direct HTTP call to Gemini API with axios...');
+      console.log('Using proxy:', process.env.HTTP_PROXY);
+
+      const response = await this.axiosInstance.post(this.baseUrl, requestBody);
+      const data: GeminiResponse = response.data;
+
+      if (!data.candidates || data.candidates.length === 0) {
+        throw new Error('No response generated from Gemini API');
+      }
+
+      const generatedText = data.candidates[0].content.parts[0].text;
+      console.log('Gemini API response received successfully');
+      return generatedText;
+    } catch (error) {
+      console.error('Gemini API call failed:', error);
+      throw error;
+    }
   }
 
   // Enhanced method for comprehensive data
@@ -64,9 +152,7 @@ class GeminiService {
     `;
 
     try {
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      const text = await this.callGeminiAPI(prompt);
 
       // Extract JSON from response
       const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -103,16 +189,14 @@ class GeminiService {
     `;
 
     try {
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-      
+      const text = await this.callGeminiAPI(prompt);
+
       // Extract JSON from response
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }
-      
+
       throw new Error('Failed to parse AI response');
     } catch (error) {
       console.error('Error generating prospect profile:', error);
@@ -179,9 +263,7 @@ class GeminiService {
     `;
 
     try {
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      const text = await this.callGeminiAPI(prompt);
 
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
@@ -223,15 +305,13 @@ class GeminiService {
     `;
 
     try {
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-      
+      const text = await this.callGeminiAPI(prompt);
+
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }
-      
+
       throw new Error('Failed to parse AI response');
     } catch (error) {
       console.error('Error generating business insights:', error);
@@ -271,15 +351,13 @@ class GeminiService {
     `;
 
     try {
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-      
+      const text = await this.callGeminiAPI(prompt);
+
       const jsonMatch = text.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }
-      
+
       throw new Error('Failed to parse AI response');
     } catch (error) {
       console.error('Error generating sales tools:', error);

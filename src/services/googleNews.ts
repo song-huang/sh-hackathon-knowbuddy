@@ -1,4 +1,6 @@
 import { NewsData, DataSource } from '@/types';
+import { HttpsProxyAgent } from 'https-proxy-agent';
+import { HttpProxyAgent } from 'http-proxy-agent';
 
 interface GoogleNewsResult {
   title: string;
@@ -11,11 +13,25 @@ interface GoogleNewsResult {
 
 class GoogleNewsService {
   private serperApiKey: string;
+  private fetchOptions: any;
 
   constructor() {
     this.serperApiKey = process.env.SERPER_API_KEY || '';
     if (!this.serperApiKey) {
       console.warn('SERPER_API_KEY not configured - Google News functionality will be limited');
+    }
+
+    // Configure proxy for fetch if available
+    const proxyUrl = process.env.HTTP_PROXY || process.env.http_proxy;
+    this.fetchOptions = {};
+
+    if (proxyUrl) {
+      console.log('Configuring Google News API with proxy:', proxyUrl);
+      const agent = proxyUrl.startsWith('https:')
+        ? new HttpsProxyAgent(proxyUrl)
+        : new HttpProxyAgent(proxyUrl);
+
+      this.fetchOptions.agent = agent;
     }
   }
 
@@ -103,6 +119,7 @@ class GoogleNewsService {
               num: 5,
               tbs: 'qdr:y', // Last year
             }),
+            ...this.fetchOptions,
           });
 
           if (!response.ok) {
@@ -314,6 +331,7 @@ class GoogleNewsService {
           num: 5,
           tbs: 'qdr:m', // Last month
         }),
+        ...this.fetchOptions,
       });
 
       if (!response.ok) {
