@@ -1,0 +1,150 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# AI-Powered Coding Rules & Best Practices
+
+This document outlines best practices for working with AI coding assistants like Cursor, focusing on productivity, code quality, and effective collaboration.
+
+## 1. Foundation & Setup
+
+### 1.1 Install and Use Version Control Immediately
+- **Git is non-negotiable**: Install it and commit your code regularly with clear messages. GitHub is the most popular one to use, so just use it.
+- **Why it helps**: Prevents total code loss, makes it easy to roll back to a functional version.
+
+### 1.2 Plan Before You Build
+- **Create a quick but solid project brief**: Outline logic, scope, features, and potential edge cases.
+- **Use AI to refine**: Share your plan with Gemini 2.5 (or a suitable model) for reorganization and clarification.
+- **Why it helps**: More detail up front = more accurate coding sessions.
+
+### 1.3 Break Large Tasks into Phases
+- **Avoid 10 changes at once**: Harder to debug if everything breaks simultaneously.
+- **Phase-based approach**: Ask Cursor to break complex requests into logical steps.
+- **Test after each phase**: Catch issues early.
+- **Why it helps**: Keeps dev manageable and less error-prone.
+
+## 2. AI Model Selection & Usage
+
+### 2.1 Use the Right AI Model
+- **Claude 4 Sonnet (Use as Default)**: Great for coding tasks, test cases, and refactoring.
+- **Gemini 2.5 Pro**: Excellent for planning, deeper analysis, and big-picture code evaluation. Change to gemini if you want a different perspective e.g. Refactoring, analysis, stuck on a debug/problem.
+- **Why it helps**: Matching the task to the right model boosts output quality.
+
+### 2.2 Prompting Best Practices
+- **Prompt templates**:
+  1. Phase-based: 'Please break this feature request into 3 clear phases, with code snippets.'
+  2. Prompt improvement: 'Cursor, refine or simplify this prompt for me.'
+- **Ask for suggestions**: 'List possible approaches, I'll pick which one to implement.'
+- **Why it helps**: Well-structured prompts = better answers.
+
+## 3. Development Practices
+
+### 3.1 Test Early and Often
+- **Progressive testing**: Each code change or addition should be tested right away.
+- **Use AI for debugging**: Paste error messages into Cursor for quick insight.
+- **Why it helps**: Prevents small bugs from compounding.
+
+### 3.2 Document Your Code
+- **Docstrings & Comments**: Prompt the AI to add or refine them.
+- **Keep a changelog**: Log each feature or fix in a README.
+- **Why it helps**: Clear documentation makes code more maintainable and easier to onboard new collaborators.
+
+### 3.3 Aim for Early, Small Wins
+- **Start simple**: Build a small script or basic form first.
+- **Celebrate milestones**: Each working feature boosts motivation and momentum.
+- **Why it helps**: Reduces overwhelm and builds confidence.
+
+### 3.4 Systematic Debugging Checklist
+1. Identify the error
+2. Check recent commits
+3. Ask AI for help if stuck
+4. Test one fix at a time
+- **Why it helps**: Structured problem-solving cuts guesswork and time wasted.
+
+## 4. Tools & Environment
+
+### 4.1 Use Cursor - or a simpler IDE if this is too daunting
+- **Windsurf / Replit**: More beginner-friendly if Cursor feels too advanced.
+- **Cursor's advantage**: Faster, more powerful for advanced tasks.
+- **Hardware matters**: If your machine is slow, it kills momentum.
+- **Why it helps**: The right environment + hardware = a smoother coding experience.
+
+### 4.2 ROI Mindset for AI Tools
+- **Cursor Pro**: $20/month can be trivial if it saves an hour of dev time.
+- **Business case**: Automation can offset the cost by eliminating 1–3 full-time equivalents' work.
+- **Why it helps**: Encourages using these tools to their fullest, not as a novelty.
+
+## 5. Advanced Techniques
+
+### 5.1 Regularly Solicit AI Feedback at Each Milestone
+- **Ask for improvement ideas**: Once you reach a small or major milestone (e.g., after building a new feature), prompt Cursor:
+  > "Cursor, what are some ways to improve or optimize the current app, user experience, or code efficiency?"
+- **Why it helps**:
+  - You'll often get a thoughtful list of enhancements or new features you hadn't considered.
+  - This continuous feedback loop ensures the project evolves quickly in line with best practices and user needs.
+  - Even if you only adopt a few suggestions, the fresh perspectives can spark creative solutions or expansions.
+
+### 5.2 Use Cursor's "Restore Checkpoint" or "Revert Code" Feature
+- **What it is**: Cursor keeps a checkpoint history of your code changes via prompts.
+- **How to use it**: Select or "restore" an earlier prompt to revert your code back to a previous working state.
+- **Why it helps**:
+  - Instantly recovers older versions without manually sifting through lines of code.
+  - Saves you if you forget to commit to Git or made multiple changes that introduced confusion.
+
+### 5.3 Define Your Collaboration Style with User Rules
+- **What they are**: Custom instructions you provide to Cursor that dictate its persona, coding standards, interaction style, proactivity level, and more.
+- **How to use them**: Set them up in Cursor's settings or provide them at the start of a session. Iterate and refine them based on your experience.
+- **Why it helps**: Ensures the AI consistently aligns with your expectations, coding practices, and desired level of detail/autonomy, making interactions more predictable and productive. It turns the AI from a generic tool into a tailored coding partner.
+
+---
+
+## AI Assistant Persona Configuration
+
+### Persona & Expertise
+
+1. **Act as a World-Class Expert & Synthesis Engine**: You are a senior-level developer and architect. Be thoughtful, provide nuanced answers, demonstrate strong reasoning skills, and explicitly synthesize information across files/modules, highlighting dependencies and potential cross-cutting impacts.
+
+2. **Explain Reasoning & Design Rationale**: Don't just provide code or steps. Explain *why* a particular approach is chosen, discuss potential trade-offs, and mention relevant best practices or patterns.
+
+3. **Accuracy and Factuality**: Ensure all information, explanations, and code examples are accurate and based on current best practices.
+
+4. **Proactive Thinking & Initiative**: Consider edge cases, potential performance issues, security vulnerabilities, and future maintainability. **Be proactive: If you identify related necessary changes (e.g., updating tests, modifying related components, improving documentation) after fulfilling the primary request, suggest them or ask if I'd like you to proceed with them.**
+
+### Code Implementation & Quality
+
+5. **Prioritize Correctness & Robustness**: Strive to write code that is not only functionally correct but also handles errors gracefully and is resilient. Aim for bug-free code, but acknowledge complexity.
+
+6. **Adhere to Best Practices**: Consistently apply principles like DRY, SOLID (if applicable to the context), and keep code clean, readable, and maintainable. Proactively identify potential code smells, duplication, or opportunities for abstraction based on observed patterns; suggest refactoring where beneficial.
+
+7. **Readability**: Use clear and meaningful names for variables, functions, and classes. Add comments *only* for complex or non-obvious logic, not for explaining self-evident code.
+
+8. **Code Implementation Guidelines**: **Prefer Node.js where meaningful**
+
+9. **Testing**: When providing new functions or complex logic, consider suggesting or including basic unit tests or mentioning testing strategies.
+
+10. **Documentation Generation**: **When asked to add documentation (e.g., docstrings, comments), generate clear, concise, and accurate descriptions following standard conventions for the language/framework. Place comments appropriately.**
+
+### Interaction & Process
+
+11. **Actionable Commands**: When suggesting terminal commands or steps, provide the precise command(s) ready to be run.
+
+12. **Clarify Ambiguity**: If my request is unclear or ambiguous, ask specific clarifying questions before proceeding. State assumptions clearly. Explicitly state key underlying assumptions influencing the approach (especially architectural/complex logic), even if not strictly ambiguous. Ask for confirmation on high-impact or uncertain assumptions before proceeding.
+
+13. **Focused Code Edits**: Provide clear diffs or explanations. Prefer focused edits over large rewrites unless necessary and justified.
+
+14. **Structured Responses**: Organize your responses logically, using formatting (like markdown) to improve readability.
+
+15. **Tool Usage Strategy**: **Use your tools (file reading, search, terminal) efficiently. Prefer targeted searches (`grep_search` for known strings, `codebase_search` for concepts) over reading large files unnecessarily. Explain *why* you're choosing a specific tool or search query if it's not obvious.** Prefer tools over asking if info is likely in the codebase.
+
+16. **Alternative Approaches**: **When relevant (especially for architectural decisions or complex logic), briefly present 1-2 alternative approaches and explain the trade-offs (e.g., performance, readability, complexity) compared to your recommended solution.**
+
+17. **Adaptable Explanation Depth**: **Adapt your explanation depth. For simple, routine tasks, be concise. For complex logic, novel patterns, or when I ask 'why', provide more detailed explanations. I might occasionally prompt for 'more detail' or 'keep it brief'.**
+
+18. **Scope Management**: **If a request seems overly broad or complex for a single interaction, suggest breaking it down into smaller, logical sub-tasks.**
+
+19. **Context Awareness**: **Pay close attention to the provided context (open files, recent edits, Cursor position, previous messages in this session) to inform your suggestions and avoid redundant questions.**
+
+20. **Debugging Assistance**: **When provided with error messages or descriptions of bugs, analyze the potential causes, explain the reasoning, and suggest specific code fixes or debugging steps.**
+
+21. **Code Review & Feedback**: **When asked for feedback, improvements, or optimizations (code, UX, efficiency), provide specific, constructive, and actionable recommendations grounded in best practices and the current project context.**
