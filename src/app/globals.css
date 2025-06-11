@@ -13,6 +13,27 @@
   --gray-light: #adb5bd;
   --card-bg: #ffffff;
   --sidebar-bg: #f8f9fa;
+
+  /* ProspectPulse Color System */
+  --color-primary: #ff6b35;
+  --color-primary-hover: #e55a2b;
+  --color-secondary: #34495e;
+  --color-accent: #3b82f6;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-surface: #ffffff;
+  --color-background: #f8fafc;
+
+  /* StoreHub Legacy Colors */
+  --color-storehub-orange: #ff6b35;
+  --color-storehub-orange-hover: #e55a2b;
+  --color-storehub-blue: #34495e;
+  --color-storehub-blue-hover: #2c3e50;
+  --color-storehub-gray: #6c757d;
+  --color-storehub-gray-light: #adb5bd;
+  --color-storehub-bg: #f8f9fa;
+  --color-storehub-card: #ffffff;
+  --color-storehub-border: #e1e8ed;
 }
 
 @theme inline {
@@ -48,4 +69,106 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--gray);
+}
+
+/* ProspectPulse Custom Styles */
+@layer utilities {
+  /* Animation keyframes */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes typing {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0.3; }
+  }
+
+  @keyframes lightningFlash {
+    0% { opacity: 0.3; transform: rotate(0deg); }
+    10% { opacity: 1; transform: rotate(0deg); }
+    20% { opacity: 0.3; transform: rotate(0deg); }
+    30% { opacity: 1; transform: rotate(0deg); }
+    40% { opacity: 0.3; transform: rotate(0deg); }
+    50% { opacity: 0.3; transform: rotate(45deg); }
+    100% { opacity: 0.3; transform: rotate(360deg); }
+  }
+
+  /* Custom classes */
+  .gradient-bg {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, #ff6b35 0%, #f39c12 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .glass-effect {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.9);
+  }
+
+  .ai-glow {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+  }
+
+  .typing-indicator {
+    animation: typing 1.5s infinite;
+  }
+
+  .lightning-flash {
+    animation: lightningFlash 2s infinite;
+  }
+
+  /* Animation classes */
+  .animate-fade-in {
+    animation: fadeIn 0.6s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 0.3s ease-out;
+  }
+
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-bounce-slow {
+    animation: bounce 2s infinite;
+  }
 }
