@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
+
   useEffect(() => {
     // Redirect to the React-based ProspectPulse page
-    window.location.href = '/prospect-pulse';
-  }, []);
+    router.push('/prospect-pulse');
+  }, [router]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center">

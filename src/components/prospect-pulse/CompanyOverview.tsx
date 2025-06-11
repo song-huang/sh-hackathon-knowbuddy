@@ -29,12 +29,14 @@ export default function CompanyOverview({ searchData, profile }: CompanyOverview
 
       <div className="p-6">
         <div className="grid grid-cols-4 gap-4">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-primary mb-1">
-              {profile.founded || 'N/A'}
+          {profile.founded && (
+            <div className="text-center">
+              <div className="text-2xl font-bold text-primary mb-1">
+                {profile.founded}
+              </div>
+              <div className="text-xs text-gray-500">Founded</div>
             </div>
-            <div className="text-xs text-gray-500">Founded</div>
-          </div>
+          )}
           <div className="text-center">
             <div className="text-2xl font-bold text-success mb-1">
               {profile.size || 'Large'}

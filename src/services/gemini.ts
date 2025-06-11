@@ -495,8 +495,7 @@ class GeminiService {
 
     IMPORTANT: Return ONLY a valid JSON object. Do NOT use markdown formatting, code blocks, or any other text.
     Do NOT wrap your response in \`\`\`json or \`\`\` tags. Return pure JSON only.
-
-    Provide JSON response:
+    Provide JSON response, and the potentialObjections should at least have 5 items
     {
       "conversationStarters": [
         "Personalized opener 1",

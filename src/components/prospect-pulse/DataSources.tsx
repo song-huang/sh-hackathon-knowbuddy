@@ -8,7 +8,7 @@ interface DataSourcesProps {
 export default function DataSources({ sources }: DataSourcesProps) {
   const [hoveredSource, setHoveredSource] = useState<number | null>(null);
   const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
-  const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
+
 
   const defaultSources = [
     { name: 'Website', icon: '🌐', description: 'Company Info', color: 'bg-blue-500' },
@@ -35,15 +35,9 @@ export default function DataSources({ sources }: DataSourcesProps) {
     setHoveredSource(null);
   };
 
-  const handleCopyUrl = async (url: string) => {
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopiedUrl(url);
-      // Clear the copied state after 2 seconds
-      setTimeout(() => setCopiedUrl(null), 2000);
-    } catch (error) {
-      console.error('Failed to copy URL:', error);
-    }
+  const handleOpenUrl = (url: string) => {
+    // Open URL in a new tab/window
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   // Convert DataSource objects to display format
@@ -181,7 +175,7 @@ export default function DataSources({ sources }: DataSourcesProps) {
                     className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${getPlatformStyle(source.type)} hover:shadow-md hover:scale-105 transition-all duration-200 cursor-pointer`}
                     onMouseEnter={(e) => handleMouseEnter(e, index)}
                     onMouseLeave={handleMouseLeave}
-                    onClick={() => handleCopyUrl(source.url)}
+                    onClick={() => handleOpenUrl(source.url)}
                   >
                     <span className="mr-1.5">{displayInfo.icon}</span>
                     {displayInfo.name}
@@ -247,7 +241,7 @@ export default function DataSources({ sources }: DataSourcesProps) {
                         </div>
                         <div className="text-xs text-gray-500 mt-2 pt-2 border-t border-gray-700 flex items-center space-x-1">
                           <span>💡</span>
-                          <span>Click to copy URL to clipboard</span>
+                          <span>Click to open URL in new tab</span>
                         </div>
                       </div>
                       {/* Tooltip arrow */}
@@ -273,18 +267,7 @@ export default function DataSources({ sources }: DataSourcesProps) {
         </div>
       )}
 
-      {/* Copy Success Notification */}
-      {copiedUrl && (
-        <div className="fixed bottom-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 animate-fade-in">
-          <div className="flex items-center space-x-2">
-            <span>✅</span>
-            <span className="font-medium">URL copied to clipboard!</span>
-          </div>
-          <div className="text-xs text-green-100 mt-1 break-all max-w-xs">
-            {copiedUrl.length > 50 ? copiedUrl.substring(0, 47) + '...' : copiedUrl}
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }
