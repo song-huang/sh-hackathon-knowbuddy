@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProspectPulse API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1a1a1a;
+            color: white;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background-color: #2a2a2a;
+        }
+        button {
+            background-color: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0052a3;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #333;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .success {
+            border-left: 4px solid #00aa00;
+        }
+        .error {
+            border-left: 4px solid #aa0000;
+        }
+        .loading {
+            color: #ffaa00;
+        }
+    </style>
+</head>
+<body>
+    <h1>ProspectPulse API Test</h1>
+    
+    <div class="test-section">
+        <h2>Search API Test</h2>
+        <button onclick="testSearchAPI()">Test Search API</button>
+        <div id="searchResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Analysis API Test</h2>
+        <button onclick="testAnalysisAPI()">Test Analysis API</button>
+        <div id="analysisResult" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Full Flow Test</h2>
+        <button onclick="testFullFlow()">Test Complete Flow</button>
+        <div id="fullFlowResult" class="result"></div>
+    </div>
+
+    <script>
+        async function testSearchAPI() {
+            const resultDiv = document.getElementById('searchResult');
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = 'Testing search API...';
+            
+            try {
+                const response = await fetch('/api/prospect/search?query=KFC&location=Singapore');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Search API Success!\n\nStatus: ${response.status}\nData collected:\n- Business: ${data.comprehensiveData?.businessData?.name || 'N/A'}\n- News: ${data.comprehensiveData?.newsData?.length || 0} articles\n- Reviews: ${data.comprehensiveData?.reviewsData?.length || 0} reviews\n- Social: ${data.comprehensiveData?.socialData?.length || 0} profiles\n- Sources: ${data.comprehensiveData?.sources?.length || 0} sources\n\nFull response:\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Search API Failed!\n\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Search API Error!\n\nError: ${error.message}\nStack: ${error.stack}`;
+            }
+        }
+        
+        async function testAnalysisAPI() {
+            const resultDiv = document.getElementById('analysisResult');
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = 'Testing analysis API...';
+            
+            try {
+                const testData = {
+                    id: 'test123',
+                    comprehensiveData: {
+                        basicInfo: { name: 'Test Restaurant' },
+                        businessData: {
+                            name: 'Test Restaurant',
+                            description: 'A test restaurant in Singapore',
+                            cuisine: ['Asian'],
+                            rating: 4.5
+                        }
+                    }
+                };
+                
+                const response = await fetch('/api/prospect/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData),
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ Analysis API Success!\n\nStatus: ${response.status}\nGenerated:\n- Profile: ${data.profile ? 'Yes' : 'No'}\n- Insights: ${data.insights ? 'Yes' : 'No'}\n- Sales Tools: ${data.salesTools ? 'Yes' : 'No'}\n\nFull response:\n${JSON.stringify(data, null, 2)}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ Analysis API Failed!\n\nStatus: ${response.status}\nResponse: ${JSON.stringify(data, null, 2)}`;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ Analysis API Error!\n\nError: ${error.message}\nStack: ${error.stack}`;
+            }
+        }
+        
+        async function testFullFlow() {
+            const resultDiv = document.getElementById('fullFlowResult');
+            resultDiv.className = 'result loading';
+            resultDiv.textContent = 'Testing complete flow...\n\nStep 1: Search API...';
+            
+            try {
+                // Step 1: Search
+                const searchResponse = await fetch('/api/prospect/search?query=McDonald\'s&location=Singapore');
+                const searchData = await searchResponse.json();
+                
+                if (!searchResponse.ok) {
+                    throw new Error(`Search failed: ${searchResponse.status}`);
+                }
+                
+                resultDiv.textContent += `\n✅ Search completed\n\nStep 2: Analysis API...`;
+                
+                // Step 2: Analysis
+                const analysisResponse = await fetch('/api/prospect/analyze', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        id: searchData.id,
+                        comprehensiveData: searchData.comprehensiveData,
+                    }),
+                });
+                
+                const analysisData = await analysisResponse.json();
+                
+                if (!analysisResponse.ok) {
+                    throw new Error(`Analysis failed: ${analysisResponse.status}`);
+                }
+                
+                resultDiv.className = 'result success';
+                resultDiv.textContent += `\n✅ Analysis completed\n\n🎉 FULL FLOW SUCCESS!\n\nSearch Results:\n- Business: ${searchData.comprehensiveData?.businessData?.name || 'N/A'}\n- Data Sources: ${searchData.comprehensiveData?.sources?.length || 0}\n\nAnalysis Results:\n- Profile Generated: ${analysisData.profile ? 'Yes' : 'No'}\n- Insights Generated: ${analysisData.insights ? 'Yes' : 'No'}\n- Sales Tools Generated: ${analysisData.salesTools ? 'Yes' : 'No'}\n\nConversation Starters:\n${analysisData.salesTools?.conversationStarters?.slice(0, 2).join('\n') || 'None generated'}`;
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.textContent += `\n\n❌ Full Flow Error!\n\nError: ${error.message}\nStack: ${error.stack}`;
+            }
+        }
+    </script>
+</body>
+</html>

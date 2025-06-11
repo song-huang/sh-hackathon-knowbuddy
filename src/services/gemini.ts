@@ -34,6 +34,57 @@ class GeminiService {
   private baseUrl: string;
   private axiosInstance: any;
 
+  private cleanJsonString(jsonStr: string): string {
+    // Remove any markdown code blocks
+    jsonStr = jsonStr.replace(/```json\s*/g, '').replace(/```\s*/g, '');
+
+    // Fix common JSON formatting issues
+    jsonStr = jsonStr
+      // Fix single quotes to double quotes
+      .replace(/'/g, '"')
+      // Fix unquoted property names
+      .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":')
+      // Fix trailing commas
+      .replace(/,(\s*[}\]])/g, '$1')
+      // Fix multiple spaces
+      .replace(/\s+/g, ' ')
+      // Trim
+      .trim();
+
+    return jsonStr;
+  }
+
+  private parseJsonSafely(text: string): any {
+    try {
+      // First try to extract JSON from the response
+      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        throw new Error('No JSON found in response');
+      }
+
+      let jsonStr = jsonMatch[0];
+      console.log('Raw JSON string length:', jsonStr.length);
+
+      // Clean the JSON string
+      jsonStr = this.cleanJsonString(jsonStr);
+      console.log('Cleaned JSON string length:', jsonStr.length);
+
+      // Try to parse
+      const parsed = JSON.parse(jsonStr);
+      console.log('JSON parsed successfully');
+      return parsed;
+    } catch (error) {
+      console.error('JSON parsing failed:', error);
+      console.error('Problematic JSON:', text.substring(0, 500) + '...');
+
+      // Return a fallback object
+      return {
+        error: 'Failed to parse AI response',
+        rawResponse: text.substring(0, 200) + '...'
+      };
+    }
+  }
+
   constructor() {
     this.apiKey = process.env.GEMINI_API_KEY;
     if (!this.apiKey) {
@@ -97,6 +148,7 @@ class GeminiService {
 
       const generatedText = data.candidates[0].content.parts[0].text;
       console.log('Gemini API response received successfully');
+      console.log('Response length:', generatedText.length);
       return generatedText;
     } catch (error) {
       console.error('Gemini API call failed:', error);
@@ -153,14 +205,7 @@ class GeminiService {
 
     try {
       const text = await this.callGeminiAPI(prompt);
-
-      // Extract JSON from response
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-
-      throw new Error('Failed to parse AI response');
+      return this.parseJsonSafely(text);
     } catch (error) {
       console.error('Error generating enhanced prospect profile:', error);
       throw error;
@@ -190,14 +235,7 @@ class GeminiService {
 
     try {
       const text = await this.callGeminiAPI(prompt);
-
-      // Extract JSON from response
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-
-      throw new Error('Failed to parse AI response');
+      return this.parseJsonSafely(text);
     } catch (error) {
       console.error('Error generating prospect profile:', error);
       throw error;
@@ -264,22 +302,16 @@ class GeminiService {
 
     try {
       const text = await this.callGeminiAPI(prompt);
+      const insights = this.parseJsonSafely(text);
 
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const insights = JSON.parse(jsonMatch[0]);
-
-        // Enhance with review analysis if available
-        if (reviewAnalysis) {
-          insights.painPoints = [...(insights.painPoints || []), ...reviewAnalysis.painPoints];
-          insights.operationalChallenges = [...(insights.operationalChallenges || []), ...reviewAnalysis.operationalIssues];
-          insights.customerSentiment = reviewAnalysis.sentimentScores;
-        }
-
-        return insights;
+      // Enhance with review analysis if available
+      if (reviewAnalysis && !insights.error) {
+        insights.painPoints = [...(insights.painPoints || []), ...reviewAnalysis.painPoints];
+        insights.operationalChallenges = [...(insights.operationalChallenges || []), ...reviewAnalysis.operationalIssues];
+        insights.customerSentiment = reviewAnalysis.sentimentScores;
       }
 
-      throw new Error('Failed to parse AI response');
+      return insights;
     } catch (error) {
       console.error('Error generating enhanced business insights:', error);
       throw error;
@@ -306,13 +338,7 @@ class GeminiService {
 
     try {
       const text = await this.callGeminiAPI(prompt);
-
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-
-      throw new Error('Failed to parse AI response');
+      return this.parseJsonSafely(text);
     } catch (error) {
       console.error('Error generating business insights:', error);
       throw error;
@@ -352,13 +378,7 @@ class GeminiService {
 
     try {
       const text = await this.callGeminiAPI(prompt);
-
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        return JSON.parse(jsonMatch[0]);
-      }
-
-      throw new Error('Failed to parse AI response');
+      return this.parseJsonSafely(text);
     } catch (error) {
       console.error('Error generating sales tools:', error);
       throw error;

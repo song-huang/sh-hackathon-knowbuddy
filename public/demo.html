@@ -484,12 +484,19 @@
                 });
 
                 const searchResponse = await fetch(`/api/prospect/search?${searchParams}`);
+                console.log('Search response status:', searchResponse.status);
+
                 if (!searchResponse.ok) {
-                    throw new Error('Search failed');
+                    throw new Error(`Search failed with status: ${searchResponse.status}`);
                 }
 
                 const searchData = await searchResponse.json();
                 console.log('Search data received:', searchData);
+
+                // Validate that we have the expected data structure
+                if (!searchData || !searchData.comprehensiveData) {
+                    throw new Error('Invalid search response format');
+                }
 
                 // Show search progress
                 updateLoadingText('✅ Data collection completed! Processing results...');
@@ -507,9 +514,9 @@
                 showResults(restaurantName, location);
                 resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-                // Show error message
+                // Show detailed error message
                 setTimeout(() => {
-                    alert('Search failed. Using demo data. Please check your internet connection.');
+                    alert(`Search failed: ${error.message}. Using demo data. Please check the browser console for more details.`);
                 }, 500);
             }
         }
