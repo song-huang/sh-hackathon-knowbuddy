@@ -31,7 +31,7 @@ export default function CompanyOverview({ searchData, profile }: CompanyOverview
         <div className="grid grid-cols-4 gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-primary mb-1">
-              {profile.founded || '2018'}
+              {profile.founded || 'N/A'}
             </div>
             <div className="text-xs text-gray-500">Founded</div>
           </div>

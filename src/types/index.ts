@@ -35,8 +35,8 @@ export interface ProspectProfile {
   businessHours?: string;
   rating?: number;
   reviewCount?: number;
-  digitalMaturity?: 'Low' | 'Medium' | 'High';
-  franchiseStatus?: 'Independent' | 'Franchise' | 'Chain';
+  digitalMaturity?: "Low" | "Medium" | "High";
+  franchiseStatus?: "Independent" | "Franchise" | "Chain";
 }
 
 export interface BusinessInsights {
@@ -73,11 +73,31 @@ export interface SalesTools {
 }
 
 export interface DataSource {
-  type: 'website' | 'social' | 'news' | 'reviews' | 'search' | 'maps' | 'menu';
+  type:
+    | "website"
+    | "social"
+    | "news"
+    | "reviews"
+    | "search"
+    | "maps"
+    | "menu"
+    | "linkedin"
+    | "glassdoor"
+    | "facebook"
+    | "instagram"
+    | "twitter"
+    | "yelp"
+    | "tripadvisor"
+    | "google"
+    | "zomato"
+    | "foursquare"
+    | "crunchbase"
+    | "bloomberg";
   url: string;
   timestamp: Date;
   confidence?: number;
   dataPoints?: number;
+  platform?: string; // Specific platform name for detailed identification
 }
 
 // Enhanced data collection types
@@ -138,7 +158,7 @@ export interface NewsData {
   date: string;
   source: string;
   url: string;
-  sentiment?: 'positive' | 'neutral' | 'negative';
+  sentiment?: "positive" | "neutral" | "negative";
 }
 
 // API Request/Response types
@@ -181,6 +201,6 @@ export interface ResultCardProps {
 }
 
 export interface LoadingStateProps {
-  stage: 'searching' | 'analyzing' | 'generating';
+  stage: "searching" | "analyzing" | "generating";
   progress?: number;
 }

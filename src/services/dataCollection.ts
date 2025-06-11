@@ -1,9 +1,24 @@
-import { DataSource, MenuData, ReviewData, NewsData, SocialMediaData } from '@/types';
-import { menuParserService } from './menuParser';
-import { reviewAnalysisService } from './reviewAnalysis';
-import { freeDataSourcesService } from './freeDataSources';
-import { googleNewsService } from './googleNews';
-import axios from 'axios';
+import {
+  DataSource,
+  MenuData,
+  ReviewData,
+  NewsData,
+  SocialMediaData,
+} from "@/types";
+import { menuParserService } from "./menuParser";
+import { reviewAnalysisService } from "./reviewAnalysis";
+import { freeDataSourcesService } from "./freeDataSources";
+import { googleNewsService } from "./googleNews";
+import {
+  LinkedInDataCollector,
+  GlassdoorDataCollector,
+  YelpDataCollector,
+  ZomatoDataCollector,
+  TripAdvisorDataCollector,
+  FoursquareDataCollector,
+  EnhancedSocialMediaCollector,
+} from "./platformDataCollectors";
+import axios from "axios";
 
 interface SerperSearchResult {
   title: string;
@@ -28,6 +43,13 @@ interface ComprehensiveData {
   reviewsData?: ReviewData[];
   newsData?: NewsData[];
   socialData?: SocialMediaData[];
+  // Enhanced platform data
+  linkedinData?: any;
+  glassdoorData?: any;
+  yelpData?: any;
+  zomatoData?: any;
+  tripadvisorData?: any;
+  foursquareData?: any;
   sources: DataSource[];
 }
 
@@ -35,14 +57,19 @@ class DataCollectionService {
   private serperApiKey: string;
 
   constructor() {
-    this.serperApiKey = process.env.SERPER_API_KEY || '';
+    this.serperApiKey = process.env.SERPER_API_KEY || "";
     if (!this.serperApiKey) {
-      console.warn('SERPER_API_KEY not configured - search functionality will be limited');
+      console.warn(
+        "SERPER_API_KEY not configured - search functionality will be limited"
+      );
     }
   }
 
   // Enhanced comprehensive search method
-  async searchCompanyInfoComprehensive(query: string, location?: string): Promise<{
+  async searchCompanyInfoComprehensive(
+    query: string,
+    location?: string
+  ): Promise<{
     data: ComprehensiveData;
     sources: DataSource[];
   }> {
@@ -57,27 +84,33 @@ class DataCollectionService {
       // 2. Free business data collection (HIGH PRIORITY)
       let businessData: any;
       try {
-        const businessResult = await freeDataSourcesService.collectBusinessData(query, location);
+        const businessResult = await freeDataSourcesService.collectBusinessData(
+          query,
+          location
+        );
         if (businessResult.data) {
           businessData = businessResult.data;
           allSources.push(...businessResult.sources);
         }
       } catch (error) {
-        console.warn('Free business data collection failed:', error);
+        console.warn("Free business data collection failed:", error);
       }
 
       // 3. Website menu scraping (HIGH PRIORITY)
       let menuData: MenuData | undefined;
-      const websiteUrl = businessData?.website || this.extractWebsiteFromBasicSearch(basicInfo);
+      const websiteUrl =
+        businessData?.website || this.extractWebsiteFromBasicSearch(basicInfo);
       if (websiteUrl) {
         try {
-          const menuResult = await menuParserService.scrapeWebsiteMenu(websiteUrl);
+          const menuResult = await menuParserService.scrapeWebsiteMenu(
+            websiteUrl
+          );
           if (menuResult.data) {
             menuData = menuResult.data;
             allSources.push(menuResult.source);
           }
         } catch (error) {
-          console.warn('Menu scraping failed:', error);
+          console.warn("Menu scraping failed:", error);
         }
       }
 
@@ -90,22 +123,145 @@ class DataCollectionService {
       // 5. Google News search (MEDIUM PRIORITY)
       let newsData: NewsData[] = [];
       try {
-        const newsResult = await googleNewsService.searchBusinessNews(query, location);
+        const newsResult = await googleNewsService.searchBusinessNews(
+          query,
+          location
+        );
         newsData = newsResult.data;
         if (newsData.length > 0) {
           allSources.push(newsResult.source);
         }
       } catch (error) {
-        console.warn('Google News search failed:', error);
+        console.warn("Google News search failed:", error);
       }
 
-      // 6. Social media data from free sources (LOW PRIORITY)
+      // 6. Enhanced platform data collection (HIGH PRIORITY)
+      let linkedinData: any;
+      let glassdoorData: any;
+      let yelpData: any;
+      let zomatoData: any;
+      let tripadvisorData: any;
+      let foursquareData: any;
+
+      // LinkedIn company data
+      try {
+        const linkedinResult = await LinkedInDataCollector.collectCompanyData(
+          query
+        );
+        linkedinData = linkedinResult.data;
+        allSources.push(linkedinResult.source);
+      } catch (error) {
+        console.warn("LinkedIn data collection failed:", error);
+      }
+
+      // Glassdoor company reviews
+      try {
+        const glassdoorResult =
+          await GlassdoorDataCollector.collectCompanyReviews(query);
+        glassdoorData = glassdoorResult.data;
+        allSources.push(glassdoorResult.source);
+      } catch (error) {
+        console.warn("Glassdoor data collection failed:", error);
+      }
+
+      // Yelp business data
+      try {
+        const yelpResult = await YelpDataCollector.collectBusinessData(
+          query,
+          location
+        );
+        yelpData = yelpResult.data;
+        allSources.push(yelpResult.source);
+        // Add Yelp reviews to reviewsData
+        if (yelpResult.data.reviews) {
+          reviewsData.push(...yelpResult.data.reviews);
+        }
+      } catch (error) {
+        console.warn("Yelp data collection failed:", error);
+      }
+
+      // Zomato restaurant data
+      try {
+        const zomatoResult = await ZomatoDataCollector.collectRestaurantData(
+          query,
+          location
+        );
+        zomatoData = zomatoResult.data;
+        allSources.push(zomatoResult.source);
+        // Add Zomato reviews to reviewsData
+        if (zomatoResult.data.reviews) {
+          reviewsData.push(...zomatoResult.data.reviews);
+        }
+      } catch (error) {
+        console.warn("Zomato data collection failed:", error);
+      }
+
+      // TripAdvisor reviews
+      try {
+        const tripadvisorResult =
+          await TripAdvisorDataCollector.collectRestaurantReviews(
+            query,
+            location
+          );
+        tripadvisorData = tripadvisorResult.data;
+        allSources.push(tripadvisorResult.source);
+        // Add TripAdvisor reviews to reviewsData
+        if (tripadvisorResult.data.reviews) {
+          reviewsData.push(...tripadvisorResult.data.reviews);
+        }
+      } catch (error) {
+        console.warn("TripAdvisor data collection failed:", error);
+      }
+
+      // Foursquare venue data
+      try {
+        const foursquareResult = await FoursquareDataCollector.collectVenueData(
+          query,
+          location
+        );
+        foursquareData = foursquareResult.data;
+        allSources.push(foursquareResult.source);
+      } catch (error) {
+        console.warn("Foursquare data collection failed:", error);
+      }
+
+      // 7. Enhanced social media data collection (MEDIUM PRIORITY)
       let socialData: SocialMediaData[] = [];
-      if (businessData?.socialMedia) {
+
+      // Collect enhanced social media data
+      try {
+        const facebookResult =
+          await EnhancedSocialMediaCollector.collectFacebookData(query);
+        socialData.push(facebookResult.data);
+        allSources.push(facebookResult.source);
+      } catch (error) {
+        console.warn("Facebook data collection failed:", error);
+      }
+
+      try {
+        const instagramResult =
+          await EnhancedSocialMediaCollector.collectInstagramData(query);
+        socialData.push(instagramResult.data);
+        allSources.push(instagramResult.source);
+      } catch (error) {
+        console.warn("Instagram data collection failed:", error);
+      }
+
+      try {
+        const twitterResult =
+          await EnhancedSocialMediaCollector.collectTwitterData(query);
+        socialData.push(twitterResult.data);
+        allSources.push(twitterResult.source);
+      } catch (error) {
+        console.warn("Twitter data collection failed:", error);
+      }
+
+      // Fallback to basic social media data if enhanced collection fails
+      if (socialData.length === 0 && businessData?.socialMedia) {
         const social = businessData.socialMedia;
         if (social.facebook) {
           socialData.push({
-            platform: 'Facebook',
+            platform: "Facebook",
             handle: this.extractHandleFromUrl(social.facebook),
             followers: undefined,
             postsPerWeek: undefined,
@@ -115,7 +271,7 @@ class DataCollectionService {
         }
         if (social.instagram) {
           socialData.push({
-            platform: 'Instagram',
+            platform: "Instagram",
             handle: this.extractHandleFromUrl(social.instagram),
             followers: undefined,
             postsPerWeek: undefined,
@@ -132,6 +288,13 @@ class DataCollectionService {
         reviewsData,
         newsData,
         socialData,
+        // Enhanced platform data
+        linkedinData,
+        glassdoorData,
+        yelpData,
+        zomatoData,
+        tripadvisorData,
+        foursquareData,
         sources: allSources,
       };
 
@@ -140,7 +303,7 @@ class DataCollectionService {
         sources: allSources,
       };
     } catch (error) {
-      console.error('Comprehensive search failed:', error);
+      console.error("Comprehensive search failed:", error);
       // Fallback to basic search
       const basicSearch = await this.searchCompanyInfo(query);
       return {
@@ -164,11 +327,11 @@ class DataCollectionService {
     // Use Serper API for search if available
     if (this.serperApiKey) {
       try {
-        const response = await fetch('https://google.serper.dev/search', {
-          method: 'POST',
+        const response = await fetch("https://google.serper.dev/search", {
+          method: "POST",
           headers: {
-            'X-API-KEY': this.serperApiKey,
-            'Content-Type': 'application/json',
+            "X-API-KEY": this.serperApiKey,
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             q: `${query} restaurant menu location contact`,
@@ -179,18 +342,18 @@ class DataCollectionService {
         if (response.ok) {
           const data: SerperResponse = await response.json();
           searchResults = data.organic || [];
-          
+
           // Add search sources
-          searchResults.forEach(result => {
+          searchResults.forEach((result) => {
             sources.push({
-              type: 'search',
+              type: "search",
               url: result.link,
               timestamp: new Date(),
             });
           });
         }
       } catch (error) {
-        console.error('Serper API error:', error);
+        console.error("Serper API error:", error);
       }
     }
 
@@ -203,44 +366,67 @@ class DataCollectionService {
     };
   }
 
-  private extractCompanyData(searchResults: SerperSearchResult[], query: string) {
+  private extractCompanyData(
+    searchResults: SerperSearchResult[],
+    query: string
+  ) {
     // Basic extraction logic - in a real implementation, this would be more sophisticated
     const companyData = {
       name: query,
-      searchResults: searchResults.map(result => ({
+      searchResults: searchResults.map((result) => ({
         title: result.title,
         snippet: result.snippet,
         url: result.link,
         date: result.date,
       })),
       extractedInfo: {
-        description: '',
+        description: "",
         locations: [] as string[],
-        cuisine: '',
-        founded: '',
-        size: '',
+        cuisine: "",
+        founded: "",
+        size: "",
       },
     };
 
     // Simple extraction patterns
-    searchResults.forEach(result => {
+    searchResults.forEach((result) => {
       const text = `${result.title} ${result.snippet}`.toLowerCase();
-      
+
       // Extract cuisine type
       const cuisineKeywords = [
-        'italian', 'chinese', 'japanese', 'mexican', 'indian', 'thai', 'french',
-        'american', 'mediterranean', 'korean', 'vietnamese', 'greek', 'spanish',
-        'pizza', 'burger', 'sushi', 'bbq', 'seafood', 'steakhouse', 'cafe', 'bakery'
+        "italian",
+        "chinese",
+        "japanese",
+        "mexican",
+        "indian",
+        "thai",
+        "french",
+        "american",
+        "mediterranean",
+        "korean",
+        "vietnamese",
+        "greek",
+        "spanish",
+        "pizza",
+        "burger",
+        "sushi",
+        "bbq",
+        "seafood",
+        "steakhouse",
+        "cafe",
+        "bakery",
       ];
-      
-      cuisineKeywords.forEach(cuisine => {
+
+      cuisineKeywords.forEach((cuisine) => {
         if (text.includes(cuisine) && !companyData.extractedInfo.cuisine) {
-          companyData.extractedInfo.cuisine = cuisine.charAt(0).toUpperCase() + cuisine.slice(1);
+          companyData.extractedInfo.cuisine =
+            cuisine.charAt(0).toUpperCase() + cuisine.slice(1);
         }
       });
 
       // Extract location information
-      const locationPattern = /(?:located|in|at)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/g;
+      const locationPattern =
+        /(?:located|in|at)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/g;
       let locationMatch;
       while ((locationMatch = locationPattern.exec(result.snippet)) !== null) {
         const location = locationMatch[1];
@@ -250,7 +436,10 @@ class DataCollectionService {
       }
 
       // Use first meaningful snippet as description
-      if (!companyData.extractedInfo.description && result.snippet.length > 50) {
+      if (
+        !companyData.extractedInfo.description &&
+        result.snippet.length > 50
+      ) {
         companyData.extractedInfo.description = result.snippet;
       }
     });
@@ -266,7 +455,7 @@ class DataCollectionService {
     try {
       const response = await fetch(url, {
         headers: {
-          'User-Agent': 'Mozilla/5.0 (compatible; ProspectPulse/1.0)',
+          "User-Agent": "Mozilla/5.0 (compatible; ProspectPulse/1.0)",
         },
       });
 
@@ -275,7 +464,7 @@ class DataCollectionService {
       }
 
       const html = await response.text();
-      
+
       // Basic extraction - in production, use Cheerio or similar
       const data = {
         title: this.extractTitle(html),
@@ -286,7 +475,7 @@ class DataCollectionService {
       return {
         data,
         source: {
-          type: 'website',
+          type: "website",
           url,
           timestamp: new Date(),
         },
@@ -299,12 +488,14 @@ class DataCollectionService {
 
   private extractTitle(html: string): string {
     const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
-    return titleMatch ? titleMatch[1].trim() : '';
+    return titleMatch ? titleMatch[1].trim() : "";
   }
 
   private extractDescription(html: string): string {
-    const descMatch = html.match(/<meta[^>]*name=["\']description["\'][^>]*content=["\']([^"']+)["\'][^>]*>/i);
-    return descMatch ? descMatch[1].trim() : '';
+    const descMatch = html.match(
+      /<meta[^>]*name=["\']description["\'][^>]*content=["\']([^"']+)["\'][^>]*>/i
+    );
+    return descMatch ? descMatch[1].trim() : "";
   }
 
   private extractWebsiteFromBasicSearch(basicInfo: any): string | null {
@@ -313,8 +504,15 @@ class DataCollectionService {
         try {
           const url = new URL(result.url);
           // Skip common domains that aren't the business website
-          const skipDomains = ['facebook.com', 'instagram.com', 'twitter.com', 'yelp.com', 'google.com', 'tripadvisor.com'];
-          if (!skipDomains.some(domain => url.hostname.includes(domain))) {
+          const skipDomains = [
+            "facebook.com",
+            "instagram.com",
+            "twitter.com",
+            "yelp.com",
+            "google.com",
+            "tripadvisor.com",
+          ];
+          if (!skipDomains.some((domain) => url.hostname.includes(domain))) {
             return result.url;
           }
         } catch (error) {
@@ -325,18 +523,23 @@ class DataCollectionService {
     return null;
   }
 
-  private async searchRecentNews(query: string, location?: string): Promise<NewsData[]> {
+  private async searchRecentNews(
+    query: string,
+    location?: string
+  ): Promise<NewsData[]> {
     if (!this.serperApiKey) {
       return [];
     }
 
     try {
-      const searchQuery = location ? `${query} ${location} restaurant news` : `${query} restaurant news`;
-      const response = await fetch('https://google.serper.dev/news', {
-        method: 'POST',
+      const searchQuery = location
+        ? `${query} ${location} restaurant news`
+        : `${query} restaurant news`;
+      const response = await fetch("https://google.serper.dev/news", {
+        method: "POST",
         headers: {
-          'X-API-KEY': this.serperApiKey,
-          'Content-Type': 'application/json',
+          "X-API-KEY": this.serperApiKey,
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           q: searchQuery,
@@ -357,15 +560,18 @@ class DataCollectionService {
         date: item.date,
         source: item.source,
         url: item.link,
-        sentiment: this.analyzeSentiment(item.title + ' ' + item.snippet),
+        sentiment: this.analyzeSentiment(item.title + " " + item.snippet),
       }));
     } catch (error) {
-      console.error('News search error:', error);
+      console.error("News search error:", error);
       return [];
     }
   }
 
-  private async checkSocialMediaPresence(query: string, basicInfo: any): Promise<SocialMediaData[]> {
+  private async checkSocialMediaPresence(
+    query: string,
+    basicInfo: any
+  ): Promise<SocialMediaData[]> {
     const socialData: SocialMediaData[] = [];
 
     // Extract social media links from search results
@@ -373,28 +579,28 @@ class DataCollectionService {
       for (const result of basicInfo.searchResults) {
         const url = result.url.toLowerCase();
 
-        if (url.includes('facebook.com')) {
+        if (url.includes("facebook.com")) {
           socialData.push({
-            platform: 'Facebook',
-            handle: this.extractSocialHandle(result.url, 'facebook'),
+            platform: "Facebook",
+            handle: this.extractSocialHandle(result.url, "facebook"),
             followers: undefined, // Would need Facebook API for actual data
             postsPerWeek: undefined,
             engagement: undefined,
             lastPost: undefined,
           });
-        } else if (url.includes('instagram.com')) {
+        } else if (url.includes("instagram.com")) {
           socialData.push({
-            platform: 'Instagram',
-            handle: this.extractSocialHandle(result.url, 'instagram'),
+            platform: "Instagram",
+            handle: this.extractSocialHandle(result.url, "instagram"),
             followers: undefined, // Would need Instagram API for actual data
             postsPerWeek: undefined,
             engagement: undefined,
             lastPost: undefined,
           });
-        } else if (url.includes('twitter.com') || url.includes('x.com')) {
+        } else if (url.includes("twitter.com") || url.includes("x.com")) {
           socialData.push({
-            platform: 'Twitter/X',
-            handle: this.extractSocialHandle(result.url, 'twitter'),
+            platform: "Twitter/X",
+            handle: this.extractSocialHandle(result.url, "twitter"),
             followers: undefined,
             postsPerWeek: undefined,
             engagement: undefined,
@@ -407,10 +613,15 @@ class DataCollectionService {
     return socialData;
   }
 
-  private extractSocialHandle(url: string, platform: string): string | undefined {
+  private extractSocialHandle(
+    url: string,
+    platform: string
+  ): string | undefined {
     try {
       const urlObj = new URL(url);
-      const pathParts = urlObj.pathname.split('/').filter(part => part.length > 0);
+      const pathParts = urlObj.pathname
+        .split("/")
+        .filter((part) => part.length > 0);
 
       if (pathParts.length > 0) {
         return pathParts[0];
@@ -421,28 +632,52 @@ class DataCollectionService {
     return undefined;
   }
 
-  private analyzeSentiment(text: string): 'positive' | 'neutral' | 'negative' {
-    const positiveWords = ['success', 'growth', 'expansion', 'award', 'best', 'excellent', 'popular', 'thriving'];
-    const negativeWords = ['closure', 'closed', 'problem', 'issue', 'complaint', 'lawsuit', 'violation', 'failed'];
+  private analyzeSentiment(text: string): "positive" | "neutral" | "negative" {
+    const positiveWords = [
+      "success",
+      "growth",
+      "expansion",
+      "award",
+      "best",
+      "excellent",
+      "popular",
+      "thriving",
+    ];
+    const negativeWords = [
+      "closure",
+      "closed",
+      "problem",
+      "issue",
+      "complaint",
+      "lawsuit",
+      "violation",
+      "failed",
+    ];
 
     const lowerText = text.toLowerCase();
-    const positiveCount = positiveWords.filter(word => lowerText.includes(word)).length;
-    const negativeCount = negativeWords.filter(word => lowerText.includes(word)).length;
+    const positiveCount = positiveWords.filter((word) =>
+      lowerText.includes(word)
+    ).length;
+    const negativeCount = negativeWords.filter((word) =>
+      lowerText.includes(word)
+    ).length;
 
-    if (positiveCount > negativeCount) return 'positive';
-    if (negativeCount > positiveCount) return 'negative';
-    return 'neutral';
+    if (positiveCount > negativeCount) return "positive";
+    if (negativeCount > positiveCount) return "negative";
+    return "neutral";
   }
 
   private extractHandleFromUrl(url: string): string | undefined {
     try {
       const urlObj = new URL(url);
-      const pathParts = urlObj.pathname.split('/').filter(part => part.length > 0);
+      const pathParts = urlObj.pathname
+        .split("/")
+        .filter((part) => part.length > 0);
 
       if (pathParts.length > 0) {
         // Remove common prefixes
         const handle = pathParts[0];
-        if (!['pages', 'profile.php', 'people'].includes(handle)) {
+        if (!["pages", "profile.php", "people"].includes(handle)) {
           return handle;
         }
         if (pathParts.length > 1) {
