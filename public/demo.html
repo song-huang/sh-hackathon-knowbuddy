@@ -133,7 +133,7 @@
                             <input
                                 type="text"
                                 id="companyInput"
-                                placeholder="Enter company name or website (e.g., KFC, McDonald's, starbucks.com)"
+                                placeholder="Enter restaurant name or website (e.g., Din Tai Fung, Old Chang Kee, tongtong.com.my)"
                                 class="w-full pl-12 pr-4 py-3.5 text-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
                                 autocomplete="off"
                             />
@@ -154,11 +154,11 @@
                         <!-- Quick Examples -->
                         <div class="flex flex-wrap gap-2 justify-center">
                             <span class="text-sm text-gray-500">Try:</span>
-                            <button onclick="setExample('KFC Singapore')" class="text-sm text-primary hover:text-primary-hover font-medium">KFC Singapore</button>
+                            <button onclick="setExample('Din Tai Fung Singapore')" class="text-sm text-primary hover:text-primary-hover font-medium">Din Tai Fung</button>
                             <span class="text-gray-300">•</span>
-                            <button onclick="setExample('Starbucks')" class="text-sm text-primary hover:text-primary-hover font-medium">Starbucks</button>
+                            <button onclick="setExample('Tong Pak Fu Malaysia')" class="text-sm text-primary hover:text-primary-hover font-medium">Tong Pak Fu</button>
                             <span class="text-gray-300">•</span>
-                            <button onclick="setExample('McDonald\'s Malaysia')" class="text-sm text-primary hover:text-primary-hover font-medium">McDonald's Malaysia</button>
+                            <button onclick="setExample('Old Chang Kee Singapore')" class="text-sm text-primary hover:text-primary-hover font-medium">Old Chang Kee</button>
                         </div>
                     </div>
                 </div>
@@ -288,7 +288,57 @@
                 const data = await response.json();
                 console.log('API response data:', data);
 
-                // Show results with real data
+                // Call AI analysis API for sales tools and insights
+                console.log('🤖 Calling AI analysis API...');
+                try {
+                    const analysisResponse = await fetch('/api/prospect/analyze', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            id: data.id,
+                            name: data.name,
+                            comprehensiveData: data.comprehensiveData
+                        })
+                    });
+
+                    if (analysisResponse.ok) {
+                        const analysisData = await analysisResponse.json();
+                        console.log('AI analysis data:', analysisData);
+
+                        // Check if AI analysis has valid data (not parsing errors)
+                        if (analysisData.salesTools && !analysisData.salesTools.error &&
+                            analysisData.salesTools.conversationStarters &&
+                            analysisData.salesTools.conversationStarters.length > 0) {
+                            // Merge valid analysis data with search data
+                            data.aiAnalysis = analysisData;
+                            console.log('✅ Using AI-generated sales tools');
+                        } else if (analysisData.salesTools && analysisData.salesTools.partialData &&
+                                   analysisData.salesTools.partialData.conversationStarters) {
+                            // Use partial data if available
+                            console.log('⚠️ Using partial AI data');
+                            data.aiAnalysis = {
+                                salesTools: {
+                                    conversationStarters: analysisData.salesTools.partialData.conversationStarters || [],
+                                    potentialObjections: [],
+                                    valuePropositions: []
+                                },
+                                profile: analysisData.profile?.partialData || {},
+                                insights: analysisData.insights?.partialData || {}
+                            };
+                        } else {
+                            console.warn('⚠️ AI analysis has parsing errors, using enhanced fallback');
+                            data.aiAnalysis = null; // Will use enhanced fallback
+                        }
+                    } else {
+                        console.warn('AI analysis failed, using fallback');
+                    }
+                } catch (analysisError) {
+                    console.warn('AI analysis error:', analysisError);
+                }
+
+                // Show results with real data (including AI analysis if available)
                 showResults(input, data);
 
             } catch (error) {
@@ -369,23 +419,28 @@
             let businessData = null;
             let sources = [];
             let isRealData = false;
+            let mainName = company;
+            let aiAnalysis = null;
 
             if (apiData && apiData.comprehensiveData) {
                 businessData = apiData.comprehensiveData.businessData;
                 sources = apiData.comprehensiveData.sources || [];
                 isRealData = true;
-                console.log('Using real API data:', businessData);
+                mainName = apiData.name || company; // Use the main name from API response
+                aiAnalysis = apiData.aiAnalysis; // AI-generated sales tools and insights
+                console.log('Using real API data. Main name:', mainName);
+                console.log('AI Analysis available:', !!aiAnalysis);
             } else {
                 console.log('Using demo data for:', company);
             }
 
-            // Determine company info
-            const companyName = businessData?.name || company;
+            // Determine company info - use main name instead of business data name
+            const companyName = mainName;
             const companyDescription = businessData?.description ||
-                `${company} is a restaurant business with strong local presence and growth potential.`;
+                `${mainName} is a restaurant business with strong local presence and excellent growth potential for StoreHub's integrated restaurant management solutions.`;
             const founded = businessData?.founded || '2018';
-            const size = businessData?.size || 'Large';
-            const cuisine = businessData?.cuisine?.join(', ') || 'Fast Food';
+            const size = businessData?.size || 'Medium-Large';
+            const cuisine = businessData?.cuisine?.join(', ') || 'Asian Cuisine';
             const priceRange = businessData?.priceRange || '$$';
 
             // Enhanced results with actual demo data
@@ -467,35 +522,31 @@
                                     </svg>
                                 </div>
                                 <h3 class="text-lg font-semibold text-gray-800">Conversation Starters</h3>
+                                ${aiAnalysis?.salesTools?.conversationStarters ?
+                                    '<div class="text-xs text-green-600 font-medium">🤖 AI-Generated</div>' :
+                                    '<div class="text-xs text-blue-600 font-medium">📝 Enhanced Templates</div>'
+                                }
                             </div>
                             <div class="space-y-3">
-                                <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-blue-500">
-                                    <div class="flex items-start space-x-3">
-                                        <div class="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <span class="text-white text-xs font-bold">1</span>
+                                ${(aiAnalysis?.salesTools?.conversationStarters || [
+                                    `"Hi there! I've been researching ${companyName} and I'm impressed by ${isRealData && businessData?.description ? 'your strong market presence' : 'your growth in the local market'}. How are you currently managing inventory and sales data across your operations?"`,
+                                    `"I noticed ${companyName} ${isRealData && sources.length > 10 ? 'has a strong digital presence with great customer engagement' : 'is building a solid customer base'}. I'd love to show you how StoreHub's integrated POS and analytics can help optimize your operations and increase profitability."`,
+                                    `"Given ${companyName}'s focus on ${cuisine.toLowerCase() !== 'asian cuisine' ? cuisine.toLowerCase() : 'quality food service'}, our restaurant management system has helped similar establishments increase revenue by 15-25% through better inventory control, customer insights, and streamlined operations."`
+                                ]).map((starter, index) => {
+                                    const colors = ['blue', 'green', 'orange'];
+                                    const color = colors[index % colors.length];
+                                    return `
+                                        <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-${color}-500">
+                                            <div class="flex items-start space-x-3">
+                                                <div class="w-5 h-5 bg-${color}-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                                                    <span class="text-white text-xs font-bold">${index + 1}</span>
+                                                </div>
+                                                <p class="text-gray-700 text-sm">${starter}</p>
+                                            </div>
+                                            <button class="mt-2 text-xs text-${color}-500 hover:text-${color}-600 font-medium">📋 Copy</button>
                                         </div>
-                                        <p class="text-gray-700 text-sm">"I noticed ${companyName} has been ${isRealData ? 'building a strong presence' : 'expanding rapidly'}. How are you managing POS operations across multiple locations?"</p>
-                                    </div>
-                                    <button class="mt-2 text-xs text-blue-500 hover:text-blue-600 font-medium">📋 Copy</button>
-                                </div>
-                                <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-green-500">
-                                    <div class="flex items-start space-x-3">
-                                        <div class="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <span class="text-white text-xs font-bold">2</span>
-                                        </div>
-                                        <p class="text-gray-700 text-sm">"With ${companyName}'s focus on customer experience, I'd love to show you how StoreHub can optimize your omnichannel strategy."</p>
-                                    </div>
-                                    <button class="mt-2 text-xs text-green-500 hover:text-green-600 font-medium">📋 Copy</button>
-                                </div>
-                                <div class="bg-gray-50 rounded-lg p-3 border-l-4 border-orange-500">
-                                    <div class="flex items-start space-x-3">
-                                        <div class="w-5 h-5 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                                            <span class="text-white text-xs font-bold">3</span>
-                                        </div>
-                                        <p class="text-gray-700 text-sm">"With your focus on customer experience, our analytics could help identify peak hour optimization opportunities."</p>
-                                    </div>
-                                    <button class="mt-2 text-xs text-orange-500 hover:text-orange-600 font-medium">📋 Copy</button>
-                                </div>
+                                    `;
+                                }).join('')}
                             </div>
                         </div>
 
@@ -510,23 +561,34 @@
                                 <h3 class="text-lg font-semibold text-gray-800">Objection Handling</h3>
                             </div>
                             <div class="space-y-3">
-                                <div class="border border-gray-200 rounded-lg p-3">
-                                    <div class="mb-2">
-                                        <div class="flex items-center space-x-2 mb-1">
-                                            <div class="w-2 h-2 bg-red-500 rounded-full"></div>
-                                            <span class="text-red-600 text-xs font-semibold">Objection:</span>
+                                ${(aiAnalysis?.salesTools?.potentialObjections || [
+                                    {
+                                        objection: "We already have a POS system that works fine.",
+                                        response: `I understand your current system works. StoreHub goes beyond basic POS - we provide integrated inventory management, real-time analytics, and customer insights that can increase your profit margins by 15-25%. Plus, our system is designed specifically for restaurants like ${companyName}.`
+                                    },
+                                    {
+                                        objection: "We're too busy to implement a new system.",
+                                        response: "That's exactly why StoreHub is perfect for you. Our implementation takes just 2-3 hours with full training, and we handle the data migration. You'll actually save time from day one with automated inventory tracking and streamlined operations."
+                                    }
+                                ]).map((objection, index) => `
+                                    <div class="border border-gray-200 rounded-lg p-3">
+                                        <div class="mb-2">
+                                            <div class="flex items-center space-x-2 mb-1">
+                                                <div class="w-2 h-2 bg-red-500 rounded-full"></div>
+                                                <span class="text-red-600 text-xs font-semibold">Objection:</span>
+                                            </div>
+                                            <p class="text-gray-700 text-xs ml-4">"${objection.objection}"</p>
                                         </div>
-                                        <p class="text-gray-700 text-xs ml-4">"We already have a POS system that works fine."</p>
-                                    </div>
-                                    <div>
-                                        <div class="flex items-center space-x-2 mb-1">
-                                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                            <span class="text-green-600 text-xs font-semibold">Response:</span>
+                                        <div>
+                                            <div class="flex items-center space-x-2 mb-1">
+                                                <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                                <span class="text-green-600 text-xs font-semibold">Response:</span>
+                                            </div>
+                                            <p class="text-gray-700 text-xs ml-4">"${objection.response}"</p>
                                         </div>
-                                        <p class="text-gray-700 text-xs ml-4">"I understand your current system works. StoreHub integrates seamlessly while providing advanced analytics that can increase efficiency by 20-30%, especially for multi-location operations like yours."</p>
+                                        <button class="mt-2 text-xs text-blue-500 hover:text-blue-600 font-medium">📋 Copy Response</button>
                                     </div>
-                                    <button class="mt-2 text-xs text-blue-500 hover:text-blue-600 font-medium">📋 Copy Response</button>
-                                </div>
+                                `).join('')}
                             </div>
                         </div>
                     </div>
@@ -543,36 +605,44 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div>
-                                <h4 class="font-semibold text-green-600 mb-3 text-sm">🚀 Growth Opportunities</h4>
+                                <h4 class="font-semibold text-green-600 mb-3 text-sm">🚀 StoreHub Opportunities</h4>
                                 <ul class="space-y-2 text-xs text-gray-700">
                                     <li class="flex items-start space-x-2">
                                         <div class="w-1 h-1 bg-green-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                                        <span>Digital ordering system expansion across all locations</span>
+                                        <span>Implement integrated POS and inventory management system</span>
                                     </li>
                                     <li class="flex items-start space-x-2">
                                         <div class="w-1 h-1 bg-green-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                                        <span>Enhanced customer analytics and loyalty programs</span>
+                                        <span>Enable online ordering and delivery integration</span>
                                     </li>
                                     <li class="flex items-start space-x-2">
                                         <div class="w-1 h-1 bg-green-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                                        <span>Multi-location inventory management optimization</span>
+                                        <span>Advanced customer analytics and loyalty program management</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <div class="w-1 h-1 bg-green-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                                        <span>Real-time sales reporting and profit optimization</span>
                                     </li>
                                 </ul>
                             </div>
                             <div>
-                                <h4 class="font-semibold text-blue-600 mb-3 text-sm">💪 Key Strengths</h4>
+                                <h4 class="font-semibold text-blue-600 mb-3 text-sm">💪 Business Strengths</h4>
                                 <ul class="space-y-2 text-xs text-gray-700">
                                     <li class="flex items-start space-x-2">
                                         <div class="w-1 h-1 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                                        <span>Strong brand recognition in Southeast Asian markets</span>
+                                        <span>Strong local market presence and customer loyalty</span>
                                     </li>
                                     <li class="flex items-start space-x-2">
                                         <div class="w-1 h-1 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                                        <span>Established customer base with high loyalty</span>
+                                        <span>Established operations with growth potential</span>
                                     </li>
                                     <li class="flex items-start space-x-2">
                                         <div class="w-1 h-1 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                                        <span>Proven track record of successful expansion</span>
+                                        <span>Ready for digital transformation and efficiency improvements</span>
+                                    </li>
+                                    <li class="flex items-start space-x-2">
+                                        <div class="w-1 h-1 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                                        <span>Multiple revenue streams and operational touchpoints</span>
                                     </li>
                                 </ul>
                             </div>
@@ -595,28 +665,28 @@
                                     <span class="text-white text-sm">🌐</span>
                                 </div>
                                 <div class="font-medium text-gray-800 text-xs">Website</div>
-                                <div class="text-xs text-gray-500">Company Info</div>
+                                <div class="text-xs text-gray-500">Business Info</div>
                             </div>
                             <div class="text-center p-3 bg-gray-50 rounded-lg">
                                 <div class="w-10 h-10 bg-blue-700 rounded-full mx-auto mb-2 flex items-center justify-center">
                                     <span class="text-white text-sm">📘</span>
                                 </div>
-                                <div class="font-medium text-gray-800 text-xs">Facebook</div>
-                                <div class="text-xs text-gray-500">Social Presence</div>
+                                <div class="font-medium text-gray-800 text-xs">Social Media</div>
+                                <div class="text-xs text-gray-500">Customer Engagement</div>
                             </div>
                             <div class="text-center p-3 bg-gray-50 rounded-lg">
-                                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mx-auto mb-2 flex items-center justify-center">
-                                    <span class="text-white text-sm">📷</span>
+                                <div class="w-10 h-10 bg-yellow-500 rounded-full mx-auto mb-2 flex items-center justify-center">
+                                    <span class="text-white text-sm">⭐</span>
                                 </div>
-                                <div class="font-medium text-gray-800 text-xs">Instagram</div>
-                                <div class="text-xs text-gray-500">Visual Content</div>
+                                <div class="font-medium text-gray-800 text-xs">Reviews</div>
+                                <div class="text-xs text-gray-500">Customer Feedback</div>
                             </div>
                             <div class="text-center p-3 bg-gray-50 rounded-lg">
                                 <div class="w-10 h-10 bg-red-500 rounded-full mx-auto mb-2 flex items-center justify-center">
                                     <span class="text-white text-sm">📰</span>
                                 </div>
                                 <div class="font-medium text-gray-800 text-xs">News</div>
-                                <div class="text-xs text-gray-500">Recent Updates</div>
+                                <div class="text-xs text-gray-500">Market Updates</div>
                             </div>
                         </div>
                         <div class="mt-4 p-3 ${isRealData ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'} border rounded-lg">

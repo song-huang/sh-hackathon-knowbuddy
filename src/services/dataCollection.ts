@@ -99,6 +99,23 @@ class DataCollectionService {
         console.warn('Google News search failed:', error);
       }
 
+      // 5.1. Social Media News search (MEDIUM PRIORITY)
+      try {
+        const socialNewsData = await googleNewsService.searchSocialMediaContent(query, location);
+        if (socialNewsData.length > 0) {
+          newsData = [...newsData, ...socialNewsData];
+          allSources.push({
+            type: 'social_media',
+            url: 'https://facebook.com,https://instagram.com,https://linkedin.com,https://twitter.com',
+            timestamp: new Date(),
+            confidence: 0.7,
+            dataPoints: socialNewsData.length,
+          });
+        }
+      } catch (error) {
+        console.warn('Social media news search failed:', error);
+      }
+
       // 6. Social media data from free sources (LOW PRIORITY)
       let socialData: SocialMediaData[] = [];
       if (businessData?.socialMedia) {

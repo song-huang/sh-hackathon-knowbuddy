@@ -38,12 +38,34 @@ class GeminiService {
     // Remove any markdown code blocks
     jsonStr = jsonStr.replace(/```json\s*/g, '').replace(/```\s*/g, '');
 
-    // Fix common JSON formatting issues
+    // Fix unescaped apostrophes in JSON strings - this is the main issue
+    // Look for patterns like "text's more text" and remove the apostrophe or replace with safe alternative
+    jsonStr = jsonStr.replace(/"([^"]*)'([^"]*)"/g, '"$1$2"');
+
+    // Fix truncated JSON by finding the last complete property
+    const lastCompleteProperty = jsonStr.lastIndexOf('",');
+    const lastCompleteArray = jsonStr.lastIndexOf(']');
+    const lastBrace = jsonStr.lastIndexOf('}');
+
+    if (lastCompleteProperty > lastBrace || lastCompleteArray > lastBrace) {
+      // JSON is truncated, try to fix it
+      const cutPoint = Math.max(lastCompleteProperty + 1, lastCompleteArray);
+      jsonStr = jsonStr.substring(0, cutPoint) + '\n}';
+      console.log('Fixed truncated JSON at position:', cutPoint);
+    }
+
+    // Additional fixes for common truncation patterns
+    if (jsonStr.includes('...')) {
+      // Remove truncation indicators and try to close properly
+      jsonStr = jsonStr.replace(/[^",}\]]*\.{3,}[^",}\]]*/g, '');
+      // Ensure proper closing
+      if (!jsonStr.endsWith('}') && !jsonStr.endsWith(']')) {
+        jsonStr += '}';
+      }
+    }
+
+    // Fix common JSON formatting issues - but be more conservative
     jsonStr = jsonStr
-      // Fix single quotes to double quotes
-      .replace(/'/g, '"')
-      // Fix unquoted property names
-      .replace(/([{,]\s*)([a-zA-Z_][a-zA-Z0-9_]*)\s*:/g, '$1"$2":')
       // Fix trailing commas
       .replace(/,(\s*[}\]])/g, '$1')
       // Fix multiple spaces
@@ -56,18 +78,33 @@ class GeminiService {
 
   private parseJsonSafely(text: string): any {
     try {
-      // First try to extract JSON from the response
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        throw new Error('No JSON found in response');
+      console.log('Parsing AI response, length:', text.length);
+
+      // First, try to extract JSON from markdown code blocks
+      let jsonStr = '';
+
+      // Look for ```json blocks first
+      const markdownMatch = text.match(/```json\s*([\s\S]*?)\s*```/);
+      if (markdownMatch) {
+        jsonStr = markdownMatch[1];
+        console.log('Found JSON in markdown block');
+      } else {
+        // Fallback: look for any JSON object
+        const jsonMatch = text.match(/\{[\s\S]*\}/);
+        if (!jsonMatch) {
+          throw new Error('No JSON found in response');
+        }
+        jsonStr = jsonMatch[0];
+        console.log('Found JSON object without markdown');
       }
 
-      let jsonStr = jsonMatch[0];
       console.log('Raw JSON string length:', jsonStr.length);
+      console.log('Raw JSON preview:', jsonStr.substring(0, 200));
 
       // Clean the JSON string
       jsonStr = this.cleanJsonString(jsonStr);
       console.log('Cleaned JSON string length:', jsonStr.length);
+      console.log('Cleaned JSON preview:', jsonStr.substring(0, 200));
 
       // Try to parse
       const parsed = JSON.parse(jsonStr);
@@ -77,16 +114,43 @@ class GeminiService {
       console.error('JSON parsing failed:', error);
       console.error('Problematic JSON:', text.substring(0, 500) + '...');
 
-      // Return a fallback object
+      // Try to extract partial data for better fallback
+      const partialData = this.extractPartialData(text);
+
       return {
         error: 'Failed to parse AI response',
-        rawResponse: text.substring(0, 200) + '...'
+        rawResponse: text.substring(0, 200) + '...',
+        partialData
       };
     }
   }
 
+  private extractPartialData(text: string): any {
+    // Try to extract some useful information even if JSON parsing fails
+    const result: any = {};
+
+    // Extract name
+    const nameMatch = text.match(/"name":\s*"([^"]+)"/);
+    if (nameMatch) result.name = nameMatch[1];
+
+    // Extract description
+    const descMatch = text.match(/"description":\s*"([^"]+)"/);
+    if (descMatch) result.description = descMatch[1];
+
+    // Extract conversation starters
+    const startersMatch = text.match(/"conversationStarters":\s*\[([\s\S]*?)\]/);
+    if (startersMatch) {
+      const starters = startersMatch[1].match(/"([^"]+)"/g);
+      if (starters) {
+        result.conversationStarters = starters.map(s => s.replace(/"/g, ''));
+      }
+    }
+
+    return Object.keys(result).length > 0 ? result : null;
+  }
+
   constructor() {
-    this.apiKey = process.env.GEMINI_API_KEY;
+    this.apiKey = process.env.GEMINI_API_KEY || '';
     if (!this.apiKey) {
       throw new Error('GEMINI_API_KEY is not configured');
     }
@@ -131,7 +195,7 @@ class GeminiService {
         temperature: 0.7,
         topK: 40,
         topP: 0.95,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 4096, // Increased for longer responses
       }
     };
 
@@ -318,22 +382,18 @@ class GeminiService {
     }
   }
 
-  async generateBusinessInsights(companyData: any, profile: ProspectProfile): Promise<BusinessInsights> {
+  async generateBusinessInsights(_companyData: any, profile: ProspectProfile): Promise<BusinessInsights> {
     const prompt = `
-    Based on the company data and profile, generate business insights for sales purposes:
-    
-    Company Data: ${JSON.stringify(companyData, null, 2)}
-    Profile: ${JSON.stringify(profile, null, 2)}
-    
-    Provide JSON response:
+    Analyze restaurant: ${profile.name || 'Unknown'}
+    Type: ${profile.cuisine || 'Restaurant'}
+
+    Return ONLY this JSON (keep each item under 50 characters):
     {
-      "recentUpdates": ["Recent update 1", "Recent update 2"],
-      "keyStrengths": ["Strength 1", "Strength 2", "Strength 3"],
-      "challenges": ["Challenge 1", "Challenge 2"],
-      "marketPosition": "Market position description"
+      "keyStrengths": ["Strength 1", "Strength 2"],
+      "challenges": ["Challenge 1", "Challenge 2"]
     }
-    
-    Focus on actionable insights for restaurant technology sales.
+
+    Focus on restaurant technology needs.
     `;
 
     try {
@@ -345,35 +405,25 @@ class GeminiService {
     }
   }
 
-  async generateSalesTools(profile: ProspectProfile, insights: BusinessInsights): Promise<SalesTools> {
+  async generateSalesTools(profile: ProspectProfile, _insights: BusinessInsights): Promise<SalesTools> {
     const prompt = `
-    Generate sales tools for approaching this restaurant prospect:
-    
-    Profile: ${JSON.stringify(profile, null, 2)}
-    Insights: ${JSON.stringify(insights, null, 2)}
-    
-    Context: We're selling StoreHub's restaurant management system (POS, inventory, analytics, etc.)
-    
-    Provide JSON response:
+    Generate 3 conversation starters for StoreHub restaurant management system sales.
+
+    Restaurant: ${profile.name || 'Unknown'}
+    Type: ${profile.cuisine || 'Restaurant'}
+
+    Context: StoreHub provides POS, inventory management, and analytics for restaurants.
+
+    Return ONLY this JSON format (keep responses under 100 characters each):
     {
       "conversationStarters": [
-        "Personalized opener 1",
-        "Personalized opener 2", 
-        "Personalized opener 3"
-      ],
-      "potentialObjections": [
-        {
-          "objection": "Common objection",
-          "response": "Suggested response"
-        }
-      ],
-      "valuePropositions": [
-        "Value prop 1",
-        "Value prop 2"
+        "Short opener 1",
+        "Short opener 2",
+        "Short opener 3"
       ]
     }
-    
-    Make conversation starters specific to this restaurant's situation.
+
+    Make each starter specific and concise.
     `;
 
     try {

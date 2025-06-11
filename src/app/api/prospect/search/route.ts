@@ -55,10 +55,46 @@ export async function GET(request: NextRequest) {
 
     // Determine business name from best available source
     let businessName = query;
-    if (comprehensiveData.businessData?.name) {
+
+    // Check if businessData name is meaningful (not generic terms)
+    const genericTerms = ['contact us', 'locate us', 'find us', 'about us', 'home', 'menu'];
+    const businessDataName = comprehensiveData.businessData?.name?.toLowerCase();
+
+    if (businessDataName && !genericTerms.some(term => businessDataName.includes(term))) {
       businessName = comprehensiveData.businessData.name;
     } else if (comprehensiveData.basicInfo?.searchResults?.[0]?.title) {
-      businessName = comprehensiveData.basicInfo.searchResults[0].title;
+      // Extract meaningful name from search result title
+      const title = comprehensiveData.basicInfo.searchResults[0].title;
+      const queryFirstWord = query.toLowerCase().split(' ')[0];
+
+      // Look for the company name in the title
+      const titleParts = title.split(/[:|–|-]/);
+      let foundName = null;
+
+      // Check each part of the title for the company name
+      for (const part of titleParts) {
+        const cleanPart = part.trim();
+        if (cleanPart.toLowerCase().includes(queryFirstWord)) {
+          // Extract just the company name (remove extra words)
+          const words = cleanPart.split(' ');
+          const companyWords = [];
+          for (const word of words) {
+            if (word.toLowerCase().includes(queryFirstWord) ||
+                (companyWords.length > 0 && companyWords.length < 3)) {
+              companyWords.push(word);
+            }
+            if (word.toLowerCase().includes(queryFirstWord)) {
+              break;
+            }
+          }
+          if (companyWords.length > 0) {
+            foundName = companyWords.join(' ').replace(/[®™©]/g, '').trim();
+            break;
+          }
+        }
+      }
+
+      businessName = foundName || query; // Fallback to original query
     }
 
     const response: SearchResponse = {

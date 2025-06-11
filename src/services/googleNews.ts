@@ -88,20 +88,37 @@ class GoogleNewsService {
     try {
       // Create search queries for different types of news
       const queries = [
-        // Recent business news
-        location 
-          ? `"${businessName}" "${location}" restaurant news`
-          : `"${businessName}" restaurant news`,
-        
-        // Expansion and growth news
+        // Exact business name search
         location
-          ? `"${businessName}" "${location}" opening expansion new location`
-          : `"${businessName}" opening expansion new location`,
-        
-        // Awards and recognition
+          ? `"${businessName}" "${location}"`
+          : `"${businessName}"`,
+
+        // Business name with restaurant context
         location
-          ? `"${businessName}" "${location}" award best restaurant`
-          : `"${businessName}" award best restaurant`,
+          ? `${businessName} ${location} restaurant`
+          : `${businessName} restaurant`,
+
+        // Social media sources - Facebook
+        `site:facebook.com ${businessName}`,
+
+        // Social media sources - Instagram
+        `site:instagram.com ${businessName}`,
+
+        // Social media sources - LinkedIn
+        `site:linkedin.com ${businessName}`,
+
+        // Social media sources - Twitter/X
+        `site:twitter.com ${businessName}`,
+
+        // Industry news for context
+        location
+          ? `restaurant industry ${location} news`
+          : 'restaurant industry news trends',
+
+        // Broader food industry news
+        location
+          ? `food business ${location} news`
+          : 'food business news',
       ];
 
       const allResults: GoogleNewsResult[] = [];
@@ -265,14 +282,28 @@ class GoogleNewsService {
   private calculateRelevance(newsItem: GoogleNewsResult, businessName: string): number {
     const text = (newsItem.title + ' ' + newsItem.snippet).toLowerCase();
     const businessNameLower = businessName.toLowerCase();
-    
+    const url = newsItem.link?.toLowerCase() || '';
+
     let score = 0;
-    
+
     // Exact business name match
     if (text.includes(businessNameLower)) {
       score += 1.0;
     }
-    
+
+    // Social media content gets bonus relevance
+    if (this.isSocialMediaSource(url)) {
+      score += 0.5;
+
+      // Additional bonus for social media engagement indicators
+      const socialKeywords = ['post', 'update', 'announcement', 'share', 'like', 'comment'];
+      socialKeywords.forEach(keyword => {
+        if (text.includes(keyword)) {
+          score += 0.1;
+        }
+      });
+    }
+
     // Business-related keywords
     const businessKeywords = ['restaurant', 'food', 'dining', 'menu', 'chef', 'kitchen'];
     businessKeywords.forEach(keyword => {
@@ -280,7 +311,7 @@ class GoogleNewsService {
         score += 0.1;
       }
     });
-    
+
     // Important business events
     const eventKeywords = ['opening', 'expansion', 'award', 'partnership', 'investment'];
     eventKeywords.forEach(keyword => {
@@ -288,8 +319,13 @@ class GoogleNewsService {
         score += 0.2;
       }
     });
-    
-    return Math.min(score, 2.0); // Cap at 2.0
+
+    return Math.min(score, 2.5); // Increased cap to accommodate social media bonus
+  }
+
+  private isSocialMediaSource(url: string): boolean {
+    const socialDomains = ['facebook.com', 'instagram.com', 'linkedin.com', 'twitter.com', 'x.com'];
+    return socialDomains.some(domain => url.includes(domain));
   }
 
   private calculateRecency(dateStr: string): number {
@@ -307,6 +343,86 @@ class GoogleNewsService {
     } catch (error) {
       return 0.5; // Default score for unparseable dates
     }
+  }
+
+  // Search for social media content specifically
+  async searchSocialMediaContent(businessName: string, location?: string): Promise<NewsData[]> {
+    if (!this.serperApiKey) {
+      return [];
+    }
+
+    try {
+      const socialPlatforms = [
+        'facebook.com',
+        'instagram.com',
+        'linkedin.com',
+        'twitter.com'
+      ];
+
+      const allResults: GoogleNewsResult[] = [];
+
+      for (const platform of socialPlatforms) {
+        try {
+          const query = location
+            ? `site:${platform} "${businessName}" "${location}"`
+            : `site:${platform} "${businessName}"`;
+
+          const response = await fetch('https://google.serper.dev/search', {
+            method: 'POST',
+            headers: {
+              'X-API-KEY': this.serperApiKey,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              q: query,
+              num: 3, // Fewer results per platform to avoid overwhelming
+            }),
+            ...this.fetchOptions,
+          });
+
+          if (!response.ok) {
+            console.warn(`Social media search failed for ${platform}: ${response.status}`);
+            continue;
+          }
+
+          const data = await response.json();
+          const searchResults = data.organic || [];
+
+          for (const item of searchResults) {
+            // Convert search results to news format
+            if (!allResults.some(existing => existing.link === item.link)) {
+              allResults.push({
+                title: item.title,
+                snippet: item.snippet,
+                date: new Date().toISOString(), // Social media posts are typically recent
+                source: this.extractSocialMediaSource(platform),
+                link: item.link,
+                imageUrl: item.thumbnail,
+              });
+            }
+          }
+        } catch (platformError) {
+          console.warn(`Error searching ${platform}:`, platformError);
+          continue;
+        }
+      }
+
+      // Process and return results
+      return allResults.map(result => this.processNewsItem(result));
+    } catch (error) {
+      console.error('Social media search error:', error);
+      return [];
+    }
+  }
+
+  private extractSocialMediaSource(platform: string): string {
+    const platformNames: { [key: string]: string } = {
+      'facebook.com': 'Facebook',
+      'instagram.com': 'Instagram',
+      'linkedin.com': 'LinkedIn',
+      'twitter.com': 'Twitter/X'
+    };
+    return platformNames[platform] || platform;
   }
 
   // Get industry-specific news for context
