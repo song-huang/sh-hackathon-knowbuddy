@@ -63,7 +63,7 @@ export default function SearchInterface({ onSearch, error }: SearchInterfaceProp
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Enter company name or website (e.g., KFC, McDonald's, starbucks.com)"
-                className="w-full pl-12 pr-4 py-3.5 text-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+                className="w-full pl-12 pr-4 py-3.5 text-base bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#ff6b35] focus:ring-2 focus:ring-[#ff6b35]/20 transition-all duration-200"
                 autoComplete="off"
               />
             </div>
