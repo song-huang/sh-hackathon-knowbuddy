@@ -12,4 +12,4 @@ Coming soon...
 
 ## Contributing
 
-This is a hackathon project. Feel free to contribute!
+This is a hackathon project. Feel free to contribute!# sh-hackathon-knowbuddy
