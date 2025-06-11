@@ -60,18 +60,6 @@
             0%, 50% { opacity: 1; }
             51%, 100% { opacity: 0.3; }
         }
-        .lightning-flash {
-            animation: lightningFlash 2s infinite;
-        }
-        @keyframes lightningFlash {
-            0% { opacity: 0.3; transform: rotate(0deg); }
-            10% { opacity: 1; transform: rotate(0deg); }
-            20% { opacity: 0.3; transform: rotate(0deg); }
-            30% { opacity: 1; transform: rotate(0deg); }
-            40% { opacity: 0.3; transform: rotate(0deg); }
-            50% { opacity: 0.3; transform: rotate(45deg); }
-            100% { opacity: 0.3; transform: rotate(360deg); }
-        }
     </style>
 </head>
 <body class="bg-background min-h-screen">
@@ -126,8 +114,8 @@
                         <!-- Single Input Field -->
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <svg class="h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 256 256">
-                                    <path d="m229.66,218.34-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"/>
+                                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                 </svg>
                             </div>
                             <input
@@ -145,8 +133,8 @@
                             onclick="startAnalysis()"
                             class="w-full bg-primary hover:bg-primary-hover text-white font-medium py-3.5 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 hover:shadow-lg flex items-center justify-center space-x-2 text-base"
                         >
-                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 256 256">
-                                <path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"/>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                             </svg>
                             <span>Analyze with AI</span>
                         </button>
@@ -167,8 +155,8 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 animate-slide-up">
                     <div class="text-center text-white/80">
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-3">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256">
-                                <path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/>
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                             </svg>
                         </div>
                         <h3 class="font-semibold mb-2">Instant Analysis</h3>
@@ -176,8 +164,8 @@
                     </div>
                     <div class="text-center text-white/80">
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-3">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256">
-                                <path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"/>
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
                             </svg>
                         </div>
                         <h3 class="font-semibold mb-2">Smart Conversation Starters</h3>
@@ -185,8 +173,8 @@
                     </div>
                     <div class="text-center text-white/80">
                         <div class="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center mx-auto mb-3">
-                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 256 256">
-                                <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/>
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
                             </svg>
                         </div>
                         <h3 class="font-semibold mb-2">Multi-Source Data</h3>
@@ -201,10 +189,8 @@
     <div id="loadingSection" class="hidden min-h-screen bg-white flex items-center justify-center">
         <div class="text-center max-w-md mx-auto px-6">
             <div class="relative mb-8">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-                    <svg class="w-10 h-10 text-primary lightning-flash" fill="currentColor" viewBox="0 0 256 256">
-                        <path d="M215.79,118.17a8,8,0,0,0-5-5.66L153.18,90.9l14.66-73.33a8,8,0,0,0-13.69-7l-112,120a8,8,0,0,0,3,13l57.63,21.61L88.16,238.43a8,8,0,0,0,13.69,7l112-120A8,8,0,0,0,215.79,118.17ZM109.37,214l10.47-52.38a8,8,0,0,0-5-9.06L62,132.71l84.62-90.66L136.16,94.43a8,8,0,0,0,5,9.06l52.8,19.8Z"/>
-                    </svg>
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <div class="w-8 h-8 bg-primary rounded-full animate-pulse"></div>
                 </div>
                 <div class="absolute -inset-2 bg-primary/5 rounded-full animate-ping"></div>
             </div>
@@ -310,8 +296,8 @@
                     <div class="max-w-6xl mx-auto px-6 py-3 flex items-center justify-between">
                         <div class="flex items-center space-x-4">
                             <button onclick="location.reload()" class="flex items-center space-x-2 text-gray-600 hover:text-primary transition-colors text-sm">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 256 256">
-                                    <path d="m224,128-96-96v72H32a8,8,0,0,0,0,16h96v72Z"/>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                                 </svg>
                                 <span>New Search</span>
                             </button>
@@ -340,8 +326,8 @@
                                 </div>
                                 <div class="flex space-x-2">
                                     <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
-                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 256 256">
-                                            <path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/>
+                                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                         </svg>
                                     </div>
                                 </div>
@@ -376,8 +362,8 @@
                         <div class="bg-white rounded-xl shadow-md p-5 animate-slide-up">
                             <div class="flex items-center space-x-3 mb-5">
                                 <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 256 256">
-                                        <path d="M128,24A104,104,0,0,0,36.18,176.88L24.83,210.93a16,16,0,0,0,20.24,20.24l34.05-11.35A104,104,0,1,0,128,24Zm0,192a87.87,87.87,0,0,1-44.06-11.81,8,8,0,0,0-6.54-.67L40,216,52.47,178.6a8,8,0,0,0-.66-6.54A88,88,0,1,1,128,216Z"/>
+                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
                                 <h3 class="text-lg font-semibold text-gray-800">Conversation Starters</h3>
@@ -417,8 +403,8 @@
                         <div class="bg-white rounded-xl shadow-md p-5 animate-slide-up" style="animation-delay: 0.1s;">
                             <div class="flex items-center space-x-3 mb-5">
                                 <div class="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
-                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 256 256">
-                                        <path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM222.93,203.8a8.5,8.5,0,0,1-7.48,4.2H40.55a8.5,8.5,0,0,1-7.48-4.2,7.59,7.59,0,0,1,0-7.72L120.52,44.21a8.75,8.75,0,0,1,15,0l87.45,151.87A7.59,7.59,0,0,1,222.93,203.8ZM120,144V104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,180Z"/>
+                                    <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
                                     </svg>
                                 </div>
                                 <h3 class="text-lg font-semibold text-gray-800">Objection Handling</h3>
@@ -449,8 +435,8 @@
                     <div class="bg-white rounded-xl shadow-md p-5 mb-6 animate-fade-in" style="animation-delay: 0.2s;">
                         <div class="flex items-center space-x-3 mb-5">
                             <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 256 256">
-                                    <path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"/>
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                             </div>
                             <h3 class="text-lg font-semibold text-gray-800">Key Business Insights</h3>
@@ -497,8 +483,8 @@
                     <div class="bg-white rounded-xl shadow-md p-5 animate-scale-in" style="animation-delay: 0.3s;">
                         <div class="flex items-center space-x-3 mb-5">
                             <div class="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
-                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 256 256">
-                                    <path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"/>
+                                <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
                                 </svg>
                             </div>
                             <h3 class="text-lg font-semibold text-gray-800">Data Sources Analyzed</h3>
