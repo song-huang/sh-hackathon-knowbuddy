@@ -19,7 +19,7 @@ class GeminiService {
   // Enhanced method for comprehensive data
   async generateEnhancedProspectProfile(comprehensiveData: {
     basicInfo: any;
-    yelpData?: any;
+    businessData?: any;
     menuData?: MenuData;
     reviewsData?: ReviewData[];
     newsData?: NewsData[];
@@ -29,7 +29,7 @@ class GeminiService {
 
     Basic Search Data: ${JSON.stringify(comprehensiveData.basicInfo, null, 2)}
 
-    ${comprehensiveData.yelpData ? `Yelp Business Data: ${JSON.stringify(comprehensiveData.yelpData, null, 2)}` : ''}
+    ${comprehensiveData.businessData ? `Business Data: ${JSON.stringify(comprehensiveData.businessData, null, 2)}` : ''}
 
     ${comprehensiveData.menuData ? `Menu Data: ${JSON.stringify(comprehensiveData.menuData, null, 2)}` : ''}
 
@@ -124,7 +124,7 @@ class GeminiService {
   async generateEnhancedBusinessInsights(
     comprehensiveData: {
       basicInfo: any;
-      yelpData?: any;
+      businessData?: any;
       menuData?: MenuData;
       reviewsData?: ReviewData[];
       newsData?: NewsData[];
@@ -142,7 +142,7 @@ class GeminiService {
 
     Profile: ${JSON.stringify(profile, null, 2)}
 
-    ${comprehensiveData.yelpData ? `Yelp Business Data: ${JSON.stringify(comprehensiveData.yelpData, null, 2)}` : ''}
+    ${comprehensiveData.businessData ? `Business Data: ${JSON.stringify(comprehensiveData.businessData, null, 2)}` : ''}
 
     ${comprehensiveData.menuData ? `Menu Analysis: ${JSON.stringify(comprehensiveData.menuData, null, 2)}` : ''}
 

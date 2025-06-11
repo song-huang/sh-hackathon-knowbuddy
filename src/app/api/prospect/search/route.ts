@@ -25,13 +25,15 @@ export async function GET(request: NextRequest) {
     let isRestaurant = false;
     let confidence = 0.5;
 
-    // Check Yelp data first (most reliable for restaurants)
-    if (comprehensiveData.yelpData) {
-      isRestaurant = comprehensiveData.yelpData.cuisine?.length > 0 ||
-                    comprehensiveData.yelpData.name?.toLowerCase().includes('restaurant') ||
-                    comprehensiveData.yelpData.name?.toLowerCase().includes('cafe') ||
-                    comprehensiveData.yelpData.name?.toLowerCase().includes('bar');
-      confidence = isRestaurant ? 0.95 : 0.7;
+    // Check business data first (most reliable for restaurants)
+    if (comprehensiveData.businessData) {
+      isRestaurant = comprehensiveData.businessData.cuisine?.length > 0 ||
+                    comprehensiveData.businessData.name?.toLowerCase().includes('restaurant') ||
+                    comprehensiveData.businessData.name?.toLowerCase().includes('cafe') ||
+                    comprehensiveData.businessData.name?.toLowerCase().includes('bar') ||
+                    comprehensiveData.businessData.description?.toLowerCase().includes('restaurant') ||
+                    comprehensiveData.businessData.description?.toLowerCase().includes('food');
+      confidence = isRestaurant ? 0.9 : 0.7;
     }
 
     // Fallback to basic search data
@@ -53,8 +55,8 @@ export async function GET(request: NextRequest) {
 
     // Determine business name from best available source
     let businessName = query;
-    if (comprehensiveData.yelpData?.name) {
-      businessName = comprehensiveData.yelpData.name;
+    if (comprehensiveData.businessData?.name) {
+      businessName = comprehensiveData.businessData.name;
     } else if (comprehensiveData.basicInfo?.searchResults?.[0]?.title) {
       businessName = comprehensiveData.basicInfo.searchResults[0].title;
     }
@@ -62,8 +64,8 @@ export async function GET(request: NextRequest) {
     const response: SearchResponse = {
       id,
       name: businessName,
-      domain: comprehensiveData.yelpData?.website ?
-              new URL(comprehensiveData.yelpData.website).hostname :
+      domain: comprehensiveData.businessData?.website ?
+              new URL(comprehensiveData.businessData.website).hostname :
               extractDomain(comprehensiveData.basicInfo?.searchResults || []),
       type: isRestaurant ? 'Restaurant' : 'Food Service',
       confidence: Math.round(confidence * 100) / 100,

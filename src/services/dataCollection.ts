@@ -1,8 +1,7 @@
 import { DataSource, MenuData, ReviewData, NewsData, SocialMediaData } from '@/types';
 import { menuParserService } from './menuParser';
 import { reviewAnalysisService } from './reviewAnalysis';
-import { socialMediaScraperService } from './socialMediaScraper';
-import { yelpScraperService } from './yelpScraper';
+import { freeDataSourcesService } from './freeDataSources';
 import { googleNewsService } from './googleNews';
 import axios from 'axios';
 
@@ -24,7 +23,7 @@ interface SerperResponse {
 
 interface ComprehensiveData {
   basicInfo: any;
-  yelpData?: any;
+  businessData?: any;
   menuData?: MenuData;
   reviewsData?: ReviewData[];
   newsData?: NewsData[];
@@ -55,21 +54,21 @@ class DataCollectionService {
       const basicInfo = basicSearch.data;
       allSources.push(...basicSearch.sources);
 
-      // 2. Yelp search (HIGH PRIORITY)
-      let yelpData: any;
+      // 2. Free business data collection (HIGH PRIORITY)
+      let businessData: any;
       try {
-        const yelpResult = await yelpScraperService.searchYelpBusiness(query, location);
-        if (yelpResult.data) {
-          yelpData = yelpResult.data;
-          allSources.push(yelpResult.source);
+        const businessResult = await freeDataSourcesService.collectBusinessData(query, location);
+        if (businessResult.data) {
+          businessData = businessResult.data;
+          allSources.push(...businessResult.sources);
         }
       } catch (error) {
-        console.warn('Yelp search failed:', error);
+        console.warn('Free business data collection failed:', error);
       }
 
       // 3. Website menu scraping (HIGH PRIORITY)
       let menuData: MenuData | undefined;
-      const websiteUrl = yelpData?.website || this.extractWebsiteFromBasicSearch(basicInfo);
+      const websiteUrl = businessData?.website || this.extractWebsiteFromBasicSearch(basicInfo);
       if (websiteUrl) {
         try {
           const menuResult = await menuParserService.scrapeWebsiteMenu(websiteUrl);
@@ -82,10 +81,10 @@ class DataCollectionService {
         }
       }
 
-      // 4. Reviews collection from Yelp (MEDIUM PRIORITY)
+      // 4. Reviews collection from free sources (MEDIUM PRIORITY)
       let reviewsData: ReviewData[] = [];
-      if (yelpData?.reviews) {
-        reviewsData = yelpData.reviews;
+      if (businessData?.reviews) {
+        reviewsData = businessData.reviews;
       }
 
       // 5. Google News search (MEDIUM PRIORITY)
@@ -100,28 +99,35 @@ class DataCollectionService {
         console.warn('Google News search failed:', error);
       }
 
-      // 6. Social media search (LOW PRIORITY)
+      // 6. Social media data from free sources (LOW PRIORITY)
       let socialData: SocialMediaData[] = [];
-      try {
-        const socialResult = await socialMediaScraperService.searchSocialMediaPresence(query, location);
-        socialData = socialResult.data.map(result => ({
-          platform: result.platform,
-          handle: result.handle,
-          followers: result.followers,
-          postsPerWeek: result.postsPerWeek,
-          engagement: result.engagement,
-          lastPost: result.lastPost,
-        }));
-        if (socialData.length > 0) {
-          allSources.push(...socialResult.sources);
+      if (businessData?.socialMedia) {
+        const social = businessData.socialMedia;
+        if (social.facebook) {
+          socialData.push({
+            platform: 'Facebook',
+            handle: this.extractHandleFromUrl(social.facebook),
+            followers: undefined,
+            postsPerWeek: undefined,
+            engagement: undefined,
+            lastPost: undefined,
+          });
         }
-      } catch (error) {
-        console.warn('Social media search failed:', error);
+        if (social.instagram) {
+          socialData.push({
+            platform: 'Instagram',
+            handle: this.extractHandleFromUrl(social.instagram),
+            followers: undefined,
+            postsPerWeek: undefined,
+            engagement: undefined,
+            lastPost: undefined,
+          });
+        }
       }
 
       const comprehensiveData: ComprehensiveData = {
         basicInfo,
-        yelpData,
+        businessData,
         menuData,
         reviewsData,
         newsData,
@@ -426,6 +432,27 @@ class DataCollectionService {
     if (positiveCount > negativeCount) return 'positive';
     if (negativeCount > positiveCount) return 'negative';
     return 'neutral';
+  }
+
+  private extractHandleFromUrl(url: string): string | undefined {
+    try {
+      const urlObj = new URL(url);
+      const pathParts = urlObj.pathname.split('/').filter(part => part.length > 0);
+
+      if (pathParts.length > 0) {
+        // Remove common prefixes
+        const handle = pathParts[0];
+        if (!['pages', 'profile.php', 'people'].includes(handle)) {
+          return handle;
+        }
+        if (pathParts.length > 1) {
+          return pathParts[1];
+        }
+      }
+    } catch (error) {
+      // Invalid URL
+    }
+    return undefined;
   }
 }
 
